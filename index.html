@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Papus Chat</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+    background:#111827;
+    color:#f2f3f5;
+    height:100vh;
+    overflow:hidden;
+}
+
+#app{
+    display:flex;
+    height:100vh;
+}
+
+/* =========================
+   BARRA LATERAL
+========================= */
+
+aside{
+    width:295px;
+    min-width:295px;
+    background:#0b1220;
+    display:flex;
+    flex-direction:column;
+    padding:12px 38px;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:15px;
+}
+
+.logo img{
+    width:180px;
+    height:auto;
+    display:block;
+    object-fit:contain;
+}
+
+/* =========================
+   PERFIL SUPERIOR
+========================= */
+
+.profile{
+    background:#0f172a;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:15px;
+    cursor:pointer;
+    transition:background 0.15s;
+}
+
+.profile:hover{
+    background:#080f1c;
+}
+
+.profile-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:9px;min-width:0}
+.profileAvatar,.bottomAvatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#5865f2;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
+.profileAvatar{width:44px;height:44px;font-size:17px;border:2px solid #747cf5;box-shadow:0 0 0 3px #0b1220;cursor:pointer}
+.profileNameText{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-edit-hint{font-size:11px;color:#949ba4;margin-top:6px}
+.avatarPreview{width:112px;height:112px;border-radius:50%;object-fit:cover;background:#5865f2;display:flex;align-items:center;justify-content:center;color:white;font-size:42px;font-weight:700;margin:14px auto 18px;overflow:hidden;border:3px solid #747cf5;box-shadow:0 0 0 5px #0b1220}
+.avatarFile{display:none}
+.changeAvatarButton{display:block;margin:0 auto 18px;padding:10px 16px;border:0;border-radius:7px;background:#5865f2;color:white;font-weight:700;cursor:pointer}
+.changeAvatarButton:hover{background:#4752c4}
+.userAvatar{width:24px;height:24px;border-radius:50%;object-fit:cover;background:#5865f2;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0}
+.user{padding:5px;font-size:13px;display:flex;align-items:center;gap:7px;border-radius:5px}
+
+
+/* =========================
+   SECCIONES
+========================= */
+
+.section{
+    font-size:11px;
+    font-weight:bold;
+    color:#9ca3af;
+    margin-top:12px;
+    margin-bottom:5px;
+}
+
+/* =========================
+   CANALES
+========================= */
+
+.channel{
+    padding:8px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-bottom:3px;
+    font-size:14px;
+    color:#e2e8f0;
+    transition:background 0.15s;
+}
+
+.channel:hover{
+    background:#26364f;
+}
+
+.channel.active{
+    background:#26364f;
+    color:white;
+}
+
+/* =========================
+   USUARIOS
+========================= */
+
+.user{
+    padding:5px;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    border-radius:5px;
+}
+
+.online{
+    color:#23a55a;
+    font-size:10px;
+}
+
+/* =========================
+   PERFIL INFERIOR
+========================= */
+
+.bottomProfile{
+    margin-top:auto;
+    background:#0f172a;
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+}
+
+.bottomName{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.bottomOption{
+    margin-top:7px;
+    cursor:pointer;
+    color:#e2e8f0;
+    padding:3px;
+    border-radius:5px;
+    transition:background 0.15s;
+}
+
+.bottomOption:hover{
+    background:#1e293b;
+    color:white;
+}
+
+/* Selectores compactos de audio, junto a los controles inferiores */
+.audioOption{display:flex;align-items:center;gap:6px;margin-top:7px;min-width:0}
+.audioOptionLabel{font-size:12px;white-space:nowrap;flex-shrink:0;color:#e2e8f0}
+.audioDeviceSelect{min-width:0;width:100%;max-width:118px;background:#111827;color:#e2e8f0;border:1px solid #334155;border-radius:5px;padding:4px 5px;font-size:11px;outline:none;cursor:pointer}
+.audioDeviceSelect:focus{border-color:#5865f2}
+
+/* =========================
+   PARTE PRINCIPAL
+========================= */
+
+main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+}
+
+.topbar{
+    height:48px;
+    display:flex;
+    align-items:center;
+    padding-left:15px;
+    background:#111827;
+    border-bottom:1px solid #232428;
+    font-weight:bold;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+#chat{
+    flex:1;
+    overflow-y:auto;
+    padding:20px;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.message{
+    background:#1e293b;
+    padding:12px;
+    border-radius:8px;
+    max-width:800px;
+    width:fit-content;
+
+    display:flex;
+    flex-direction:column;
+}
+
+.messageUser{
+    font-weight:600;
+    font-size:15px;
+    margin-bottom:4px;
+    color:white;
+}
+
+.messageText{
+    color:#e2e8f0;
+    word-break:break-word;
+    line-height:1.4;
+}
+
+/* =========================
+   CAJA DE MENSAJES
+========================= */
+
+#bottom{
+    padding:15px;
+    padding-bottom:24px;
+    background:#111827;
+}
+
+#inputBox{
+    display:flex;
+    gap:10px;
+}
+
+#message{
+    flex:1;
+    background:#1e293b;
+    border:none;
+    outline:none;
+    padding:14px;
+    border-radius:8px;
+    color:white;
+    font-size:15px;
+}
+
+#message::placeholder{
+    color:#949ba4;
+}
+
+#send{
+    background:#5865f2;
+    border:none;
+    color:white;
+    padding:0 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#send:hover{
+    background:#4752c4;
+}
+
+/* =========================
+   MODAL CAMBIAR NOMBRE
+========================= */
+
+#nameModal{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.65);
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    z-index:1000;
+}
+
+#nameModal.show{
+    display:flex;
+}
+
+.nameBox{
+    width:350px;
+    background:#0b1220;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+.nameBox h2{
+    margin-bottom:8px;
+}
+
+.nameBox p{
+    color:#94a3b8;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+#nameInput{
+    width:100%;
+    background:#0f172a;
+    border:none;
+    outline:none;
+    padding:12px;
+    border-radius:6px;
+    color:white;
+    font-size:15px;
+    margin-bottom:12px;
+}
+
+.nameButtons{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+}
+
+.nameButton{
+    border:none;
+    border-radius:6px;
+    padding:9px 15px;
+    cursor:pointer;
+    color:white;
+}
+
+.cancelButton{
+    background:#334155;
+}
+
+.saveButton{
+    background:#5865f2;
+}
+
+.saveButton:hover{
+    background:#4752c4;
+}
+
+.cancelButton:hover{
+    background:#64748b;
+}
+
+
+
+/* =========================
+   INTERFAZ DE LLAMADA
+========================= */
+#callStage{
+    flex:1; min-height:0; display:none; flex-direction:column;
+    align-items:center; justify-content:center; position:relative;
+    padding:24px; background:#232428; gap:24px;
+}
+.callTitle{font-size:22px;font-weight:700}
+.callSubtitle{font-size:13px;color:#94a3b8;margin-top:-16px}
+.callPeople{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
+.callPerson{width:190px;height:190px;border-radius:18px;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:2px solid #243247}
+.callAvatar{width:90px;height:90px;border-radius:50%;background:#5865f2;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:700;color:white;object-fit:cover}
+.callPersonName{font-size:14px;font-weight:600}
+.callControls{display:flex;gap:12px;align-items:center;justify-content:center}
+.callControl{border:0;border-radius:50%;width:48px;height:48px;background:#1e293b;color:white;font-size:19px;cursor:pointer}
+.callControl:hover{background:#334155}
+.callControl.off{background:#da373c}
+.callControl.hangup{width:58px;border-radius:24px;background:#da373c}
+#miniCall{display:none;position:absolute;top:62px;right:18px;z-index:20;width:280px;background:#0f172a;border:1px solid #334155;border-radius:12px;padding:12px;box-shadow:0 8px 28px #0008}
+#miniCall .miniTop{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;margin-bottom:10px}
+#miniCall .miniInfo{font-size:12px;color:#94a3b8;margin-bottom:10px}
+#miniCall .miniActions{display:flex;gap:8px}
+#miniCall button{border:0;border-radius:7px;padding:8px 10px;background:#1e293b;color:white;cursor:pointer}
+#miniCall button.openCall{background:#5865f2;flex:1}
+#miniCall button.endCall{background:#da373c}
+main{position:relative;min-width:0}
+#callStage.callStageVisible{display:flex !important;flex:1 1 auto;width:100%;min-height:0;visibility:visible}
+#chat.chatHidden,#bottom.bottomHidden,#typingIndicator.typingHidden{display:none !important}
+#miniCall.miniCallVisible{display:block !important;}
+
+
+/* Ajustes: barra inferior cerca del borde, sin quedar pegada, y selector oculto */
+#bottom{padding:15px 15px 22px !important}
+#inputBox{align-items:center;gap:10px}
+#fileInput{display:none !important;position:absolute !important;width:1px !important;height:1px !important;opacity:0 !important;pointer-events:none !important}
+#attachButton{
+  width:52px;height:52px;flex:0 0 52px;background:#203858;color:#e2e8f0;
+  border:1px solid #314b70;border-radius:18px;outline:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:0;cursor:pointer;transition:background .15s,transform .15s,border-radius .15s;
+  box-shadow:0 3px 10px rgba(0,0,0,.18)
+}
+#attachButton::before{content:"📎";font-size:22px}
+#attachButton:hover{background:#2b4770;border-radius:50%;transform:translateY(-1px)}
+#attachButton:disabled{opacity:.6;cursor:wait}
+#message{height:44px;min-width:0}
+#send{height:42px;padding:0 18px}
+.uploadStatus{font-size:12px;color:#94a3b8;padding:5px 70px 0;min-height:0}
+@media(max-width:760px){
+ aside{width:220px;min-width:220px;padding:12px}
+ #bottom{padding-bottom:18px !important}
+ #attachButton{width:44px;flex-basis:44px;height:44px;border-radius:15px}
+ .uploadStatus{padding-left:52px}
+}
+/* Scrollbars dark to match Papus Chat, including the audio-device menus. */
+*{scrollbar-width:thin;scrollbar-color:#344766 #0b1220}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:#0b1220;border-radius:10px}
+*::-webkit-scrollbar-thumb{background:#344766;border:2px solid #0b1220;border-radius:10px}
+*::-webkit-scrollbar-thumb:hover{background:#50658a}
+.customAudioMenu{background:#0b1220!important;border:1px solid #344766!important;border-radius:10px!important;overflow-y:auto;scrollbar-color:#344766 #0b1220}
+.customAudioMenu::-webkit-scrollbar-track{background:#0b1220;border-radius:10px}
+.customAudioMenu::-webkit-scrollbar-thumb{background:#344766;border:2px solid #0b1220;border-radius:10px}
+
+
+/* Vista previa de adjuntos */
+.attachmentCard{display:flex;flex-direction:column;gap:10px;min-width:260px;max-width:380px;padding:10px;margin-top:8px;background:#0b1220;border:1px solid #334155;border-radius:10px}
+.attachmentPreview{display:block;max-width:100%;width:auto;max-height:260px;object-fit:contain;align-self:flex-start;border-radius:7px;background:#0f172a}
+.attachmentPreviewImage{cursor:pointer}
+.attachmentVideo{width:100%;max-height:260px}
+.attachmentZipIcon{display:block;width:100px;height:100px;object-fit:contain;background:transparent;align-self:center;margin:4px auto 8px;border:0;box-shadow:none}
+.attachmentMeta{display:flex;align-items:center;gap:10px;min-width:0}
+.attachmentIcon{font-size:28px;flex:0 0 38px}
+.attachmentInfo{flex:1;min-width:0}
+.attachmentName{font-size:13px;font-weight:600;overflow-wrap:anywhere}
+.attachmentSize{font-size:11px;color:#94a3b8;margin-top:3px}
+.attachmentDownload{display:inline-block;color:#c9cdff;background:#26364f;padding:7px 10px;border-radius:6px;text-decoration:none;font-size:12px;align-self:flex-start}
+.attachmentDownload:hover{background:#3b4d68}
+
+
+/* Correcciones solicitadas: paleta azul oscuro e icono ZIP centrado */
+.attachmentZipIcon{display:block;width:100px;height:100px;object-fit:contain;background:transparent;align-self:center;margin:4px auto 8px;border:0;box-shadow:none}
+.logo img{border:0;outline:0;box-shadow:none;background:transparent}
+
+/* Barra superior y acción de borrar con la misma temática azul marino */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:0 18px 0 15px;
+    box-sizing:border-box;
+    background:#0b1220;
+    border-bottom:1px solid #26364f;
+}
+.topbarTitle{min-width:0}
+.clearChatButton{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    border:1px solid #334b70;
+    border-radius:7px;
+    padding:7px 11px;
+    background:#172943;
+    color:#dbeafe;
+    font:600 12px/1.2 inherit;
+    cursor:pointer;
+    transition:background .15s,border-color .15s,transform .15s;
+}
+.clearChatButton:hover{background:#243d60;border-color:#5275a6}
+.clearChatButton:active{transform:translateY(1px)}
+.clearChatButton span{font-size:16px;line-height:1}
+.audioOption{padding:2px 0}
+.audioDeviceSelect{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    box-sizing:border-box;
+    color-scheme:dark;
+    width:100%;
+    max-width:132px;
+    min-height:30px;
+    padding:6px 26px 6px 9px;
+    border:1px solid #2e4567;
+    border-radius:7px;
+    background-color:#111c30;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2393c5fd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 8px center;
+    color:#dbeafe;
+    font:500 11px/1.2 inherit;
+    outline:none;
+    cursor:pointer;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.audioDeviceSelect:hover{background-color:#172943;border-color:#45648f}
+.audioDeviceSelect:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(59,130,246,.18)}
+.audioDeviceSelect option{background:#0b1220;color:#dbeafe}
+.audioOptionLabel{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:23px;height:26px;
+    border-radius:6px;
+    background:#172943;
+    color:#93c5fd;
+}
+@media(max-width:600px){
+    .clearChatButton{padding:6px 8px;font-size:11px}
+    .topbar{padding-right:9px}
+}
+
+
+/* Selectores de audio desplegables personalizados, azul marino */
+.audioDeviceSelect{display:none !important}
+.customAudioSelect{position:relative;min-width:0;width:100%;max-width:132px}
+.customAudioTrigger{
+  display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%;
+  min-height:30px;padding:6px 9px;border:1px solid #2e4567;border-radius:7px;
+  background:#111c30;color:#dbeafe;font:500 11px/1.2 "Segoe UI",sans-serif;
+  text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;
+}
+.customAudioTrigger:hover,.customAudioTrigger[aria-expanded="true"]{background:#172943;border-color:#5275a6}
+.customAudioTrigger:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+.customAudioTrigger .customAudioValue{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.customAudioTrigger .customAudioChevron{color:#93c5fd;flex-shrink:0;font-size:10px}
+.customAudioMenu{
+  display:none;position:absolute;left:0;bottom:calc(100% + 7px);z-index:1000;
+  width:min(300px, calc(100vw - 90px));max-height:260px;overflow-y:auto;
+  padding:5px;border:1px solid #2e4567;border-radius:9px;background:#0b1220;
+  box-shadow:0 12px 30px rgba(0,0,0,.45);
+}
+.customAudioMenu.open{display:block}
+.customAudioOption{
+  display:block;width:100%;padding:9px 10px;border:0;border-radius:6px;
+  background:transparent;color:#cbd5e1;text-align:left;font:12px "Segoe UI",sans-serif;
+  cursor:pointer;overflow-wrap:anywhere;
+}
+.customAudioOption:hover{background:#172943;color:#fff}
+.customAudioOption.selected{background:#203858;color:#bfdbfe}
+.deleteMessageButton{
+  display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:28px;height:28px;border:1px solid #45648f;border-radius:9px;
+  background:#172943;color:#dbeafe;font-size:16px;line-height:1;cursor:pointer;
+}
+.deleteMessageButton:hover{background:#263f63;border-color:#7094c8;color:#fff;transform:scale(1.05)}
+.messageHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.messageHeader .messageUser{margin-bottom:0}
+.messageHeader{width:100%;min-width:220px}
+.deleteMessageButton{opacity:1!important;visibility:visible!important;background:#172943;border:1px solid #45648f;color:#dbeafe;font-size:16px}
+.deleteMessageButton:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+
+
+/* ===== MODAL DE CONFIRMACIÓN PAPUS CHAT ===== */
+#papusConfirmOverlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(3,7,18,.72);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    z-index:99999;
+}
+#papusConfirmOverlay.papusConfirmVisible{display:flex}
+.papusConfirmBox{
+    width:min(430px,calc(100vw - 40px));
+    background:#0b1220;
+    border:1px solid #273957;
+    border-radius:14px;
+    padding:22px;
+    box-shadow:0 20px 60px rgba(0,0,0,.65);
+    font-family:inherit;
+    animation:papusConfirmShow .15s ease-out;
+}
+@keyframes papusConfirmShow{
+    from{opacity:0;transform:translateY(8px) scale(.98)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+}
+.papusConfirmTitle{
+    margin:0 0 9px;
+    color:#f8fafc;
+    font-size:18px;
+    font-weight:700;
+}
+.papusConfirmText{
+    margin:0 0 20px;
+    color:#cbd5e1;
+    font-size:14px;
+    line-height:1.5;
+    white-space:pre-line;
+}
+.papusConfirmActions{
+    display:flex;
+    justify-content:flex-end;
+    gap:9px;
+}
+.papusConfirmButton{
+    border:1px solid transparent;
+    border-radius:8px;
+    padding:9px 16px;
+    min-width:90px;
+    cursor:pointer;
+    font:600 13px "Segoe UI",sans-serif;
+}
+.papusConfirmCancel{
+    background:#172943;
+    border-color:#334b70;
+    color:#dbeafe;
+}
+.papusConfirmCancel:hover{background:#243d60}
+.papusConfirmAccept{
+    background:#5865f2;
+    border-color:#6874f4;
+    color:white;
+}
+.papusConfirmAccept:hover{background:#4752c4}
+.papusConfirmDanger{
+    background:#472535;
+    border-color:#733c50;
+    color:#ffe1e7;
+}
+.papusConfirmDanger:hover{background:#5b2c40}
+@media(max-width:500px){
+    .papusConfirmActions{flex-direction:column-reverse}
+    .papusConfirmButton{width:100%}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+<aside>
+
+    <!-- LOGO -->
+
+    <div class="logo">
+
+        <img
+            src="papus-chat.png"
+            alt="Papus Chat"
+        >
+
+    </div>
+
+
+    <!-- PERFIL -->
+
+    <div
+        class="profile"
+        id="profileButton"
+        title="Cambiar nombre"
+    >
+
+        <div class="profile-name" id="visibleName">
+            <span class="profileAvatar" id="profileAvatar">U</span>
+            <span class="profileNameText" id="visibleNameText">Usuario</span>
+        </div>
+        
+
+    </div>
+
+
+    <!-- CANALES DE TEXTO -->
+
+    <div class="section">
+        CANALES DE TEXTO
+    </div>
+
+
+    <div
+        class="channel active"
+        id="generalChannel"
+        onclick="entrarGeneral()"
+    >
+        💬Chat General💬
+    </div>
+
+
+    <!-- CANALES DE VOZ -->
+
+    <div class="section">
+        CANALES DE VOZ
+    </div>
+
+
+    <div
+        class="channel"
+        id="callChannel"
+        onclick="salirDelChat()"
+    >
+        🔊 Llamada
+    </div>
+
+
+    <!-- USUARIOS -->
+
+    <div class="section">
+        EN LÍNEA
+    </div>
+
+
+    <div id="users"></div>
+
+
+    <!-- PARTE INFERIOR -->
+
+    <div class="bottomProfile">
+
+        <span class="bottomName" id="bottomName"><img class="bottomAvatar" id="bottomAvatar" alt="" style="vertical-align:middle;margin-right:6px"> <span id="bottomNameText">Usuario</span></span>
+
+
+        <div class="audioOption">
+            <label class="audioOptionLabel" for="microphoneSelect">🎤</label>
+            <select id="microphoneSelect" class="audioDeviceSelect" aria-label="Elegir micrófono">
+                <option value="">Detectando micrófonos…</option>
+            </select>
+        </div>
+
+        <div class="audioOption">
+            <label class="audioOptionLabel" for="speakerSelect">🔊</label>
+            <select id="speakerSelect" class="audioDeviceSelect" aria-label="Elegir altavoz">
+                <option value="">Detectando salidas…</option>
+            </select>
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================
+     PARTE PRINCIPAL
+========================= -->
+
+<main>
+
+    <div class="topbar" id="topbar">
+        <span class="topbarTitle">💬Chat General💬</span>
+    </div>
+
+
+    <div id="chat"></div>
+
+    <section id="callStage" aria-label="Llamada">
+        <div class="callTitle">🔊 Llamada</div>
+        <div class="callSubtitle" id="callStatus">Estás en la llamada</div>
+        <div class="callPeople" id="callPeople"></div>
+        <div class="callControls">
+            <button class="callControl" id="micToggle" title="Activar/desactivar micrófono" onclick="toggleCallControl('micToggle','🎤','🔇')">🎤</button>
+            <button class="callControl" id="soundToggle" title="Activar/desactivar sonido" onclick="toggleCallControl('soundToggle','🔊','🔈')">🔊</button>
+            <button class="callControl hangup" title="Salir de la llamada" onclick="colgarLlamada()">📞</button>
+        </div>
+    </section>
+
+    <div id="miniCall">
+        <div class="miniTop"><span>🟢 Llamada en curso</span><span id="miniCallTime">Conectado</span></div>
+        <div class="miniInfo">La llamada sigue activa mientras estás en 💬Chat General💬.</div>
+        <div class="miniActions">
+            <button class="openCall" onclick="mostrarLlamadaCompleta()">Volver a la llamada</button>
+            <button class="endCall" onclick="colgarLlamada()" title="Colgar">📞</button>
+        </div>
+    </div>
+
+    <div id="typingIndicator" style="padding:0 20px 6px; font-size:12px; color:#aaa; min-height:18px;"></div>
+
+    <!-- CAJA DE MENSAJE -->
+
+    <div id="bottom">
+
+        <div id="inputBox">
+
+            <button type="button" id="attachButton" title="Adjuntar archivo" aria-label="Adjuntar archivo">📎</button>
+            <input id="fileInput" type="file">
+            <input
+                id="message"
+                placeholder="Escribe un mensaje..."
+                autocomplete="off"
+            >
+
+
+            <button
+                id="send"
+                onclick="sendMessage()"
+            >
+                Enviar
+            </button>
+
+        </div>
+        <div id="uploadStatus" class="uploadStatus" role="status" aria-live="polite"></div>
+
+    </div>
+
+</main>
+
+</div>
+
+<!-- =========================
+     MODAL CAMBIAR NOMBRE
+========================= -->
+
+<div id="nameModal">
+
+<div class="nameBox">
+
+    <h2>Tu perfil</h2>
+    <p>Elige el nombre y la foto que verán los demás usuarios. La foto se guardará en el servidor.</p>
+    <div id="avatarPreview" class="avatarPreview" title="Vista previa de tu foto">U</div>
+    <button type="button" id="changeAvatarButton" class="changeAvatarButton">Cambiar foto</button>
+    <input id="avatarInput" class="avatarFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+
+
+    <input
+        id="nameInput"
+        type="text"
+        maxlength="20"
+        placeholder="Escribe tu nombre..."
+        autocomplete="off"
+    >
+
+
+    <div class="nameButtons">
+
+        <button
+            class="nameButton cancelButton"
+            onclick="cerrarNombre()"
+        >
+            Cancelar
+        </button>
+
+
+        <button
+            class="nameButton saveButton"
+            onclick="guardarNombre()"
+        >
+            Guardar
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ===== CONFIRMACIÓN PROPIA DE PAPUS CHAT ===== -->
+<div id="papusConfirmOverlay" aria-hidden="true">
+    <div class="papusConfirmBox" role="dialog" aria-modal="true" aria-labelledby="papusConfirmTitle">
+        <h2 id="papusConfirmTitle" class="papusConfirmTitle">Confirmar acción</h2>
+        <p id="papusConfirmText" class="papusConfirmText"></p>
+        <div class="papusConfirmActions">
+            <button type="button" id="papusConfirmCancel" class="papusConfirmButton papusConfirmCancel">Cancelar</button>
+            <button type="button" id="papusConfirmAccept" class="papusConfirmButton papusConfirmAccept">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+/* ==================================================
+   SOCKET
+================================================== */
+
+const papusClientKey = (() => {
+    let key = localStorage.getItem("papusClientKey");
+    if (!key) {
+        key = (crypto.randomUUID ? crypto.randomUUID() : ("papus-" + Date.now() + "-" + Math.random().toString(36).slice(2)));
+        localStorage.setItem("papusClientKey", key);
+    }
+    return key;
+})();
+const socket = io();
+
+
+/* ===== CONFIRMACIÓN PROPIA DE PAPUS CHAT ===== */
+const papusConfirmOverlay = document.getElementById("papusConfirmOverlay");
+const papusConfirmTitle = document.getElementById("papusConfirmTitle");
+const papusConfirmText = document.getElementById("papusConfirmText");
+const papusConfirmCancel = document.getElementById("papusConfirmCancel");
+const papusConfirmAccept = document.getElementById("papusConfirmAccept");
+
+let papusConfirmResolver = null;
+
+function mostrarConfirmacionPapus({
+    titulo = "Confirmar acción",
+    texto = "¿Seguro que quieres continuar?",
+    aceptar = "Aceptar",
+    peligro = false
+} = {}) {
+    return new Promise(resolve => {
+        if (!papusConfirmOverlay) {
+            resolve(false);
+            return;
+        }
+
+        if (papusConfirmResolver) papusConfirmResolver(false);
+        papusConfirmResolver = resolve;
+
+        papusConfirmTitle.textContent = titulo;
+        papusConfirmText.textContent = texto;
+        papusConfirmAccept.textContent = aceptar;
+        papusConfirmAccept.classList.toggle("papusConfirmDanger", peligro);
+
+        papusConfirmOverlay.classList.add("papusConfirmVisible");
+        papusConfirmOverlay.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => papusConfirmAccept.focus(), 20);
+    });
+}
+
+function cerrarConfirmacionPapus(resultado = false) {
+    papusConfirmOverlay.classList.remove("papusConfirmVisible");
+    papusConfirmOverlay.setAttribute("aria-hidden", "true");
+
+    const resolver = papusConfirmResolver;
+    papusConfirmResolver = null;
+
+    if (resolver) resolver(resultado);
+}
+
+papusConfirmCancel.addEventListener("click", () => cerrarConfirmacionPapus(false));
+papusConfirmAccept.addEventListener("click", () => cerrarConfirmacionPapus(true));
+
+papusConfirmOverlay.addEventListener("click", event => {
+    if (event.target === papusConfirmOverlay) {
+        cerrarConfirmacionPapus(false);
+    }
+});
+
+document.addEventListener("keydown", event => {
+    if (!papusConfirmOverlay.classList.contains("papusConfirmVisible")) return;
+
+    if (event.key === "Escape") {
+        event.preventDefault();
+        cerrarConfirmacionPapus(false);
+    }
+});
+
+
+/* ==================================================
+   NOMBRE LOCAL
+================================================== */
+
+let nombreVisible =
+    localStorage.getItem("visible") || "Usuario";
+
+
+/* ==================================================
+   MOSTRAR NOMBRE
+================================================== */
+
+let fotoPerfil = localStorage.getItem("fotoPerfil") || "";
+let usuariosActuales = [];
+
+function iniciales(nombre){ return (String(nombre || "U").trim()[0] || "U").toUpperCase(); }
+function ponerAvatar(elemento, nombre, foto){
+    if(!elemento) return;
+    elemento.innerHTML = "";
+    if(foto){
+        const img = document.createElement("img");
+        img.src = foto; img.alt = "Foto de " + nombre;
+        img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:inherit";
+        img.onerror = () => { elemento.textContent = iniciales(nombre); };
+        elemento.appendChild(img);
+    } else {
+        elemento.textContent = iniciales(nombre);
+    }
+}
+function actualizarNombre(){
+    const nameText = document.getElementById("visibleNameText");
+    if(nameText) nameText.textContent = nombreVisible;
+    const bottomText = document.getElementById("bottomNameText");
+    if(bottomText) bottomText.textContent = nombreVisible;
+    ponerAvatar(document.getElementById("profileAvatar"), nombreVisible, fotoPerfil);
+    ponerAvatar(document.getElementById("bottomAvatar"), nombreVisible, fotoPerfil);
+    ponerAvatar(document.getElementById("avatarPreview"), nombreVisible, fotoPerfil);
+    renderCallPeople();
+}
+actualizarNombre();
+
+
+/* ==================================================
+   CUANDO EL SOCKET CONECTA
+================================================== */
+
+socket.on(
+    "connect",
+    () => {
+
+        /*
+         * Cada vez que recargamos,
+         * mandamos inmediatamente nuestro
+         * nombre guardado.
+         */
+
+        socket.emit("set-client-key", papusClientKey);
+        socket.emit("set-username", nombreVisible);
+
+    }
+);
+
+
+/* ==================================================
+   CAMBIAR NOMBRE
+================================================== */
+
+document
+    .getElementById("profileButton")
+    .addEventListener(
+        "click",
+        abrirNombre
+    );
+
+
+function abrirNombre(){
+
+    const modal =
+        document.getElementById("nameModal");
+
+
+    const input =
+        document.getElementById("nameInput");
+
+
+    input.value = nombreVisible;
+    ponerAvatar(document.getElementById("avatarPreview"), nombreVisible, fotoPerfil);
+    modal.classList.add("show");
+
+
+    setTimeout(
+        () => {
+
+            input.focus();
+            input.select();
+
+        },
+        50
+    );
+
+}
+
+
+function cerrarNombre(){
+
+    document
+        .getElementById("nameModal")
+        .classList.remove("show");
+
+}
+
+
+document.getElementById("changeAvatarButton").addEventListener("click", () => {
+    document.getElementById("avatarInput").click();
+});
+
+document.getElementById("avatarInput").addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith("image/")){ alert("Elige un archivo de imagen."); return; }
+    if(file.size > 8 * 1024 * 1024){ alert("La imagen debe pesar menos de 8 MB."); e.target.value=""; return; }
+    try {
+        // Reducir la imagen para que se cargue rápido y ocupe poco espacio.
+        const raw = await new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file);
+        });
+        const img = await new Promise((resolve, reject) => { const image = new Image(); image.onload=()=>resolve(image); image.onerror=reject; image.src=raw; });
+        const canvas = document.createElement("canvas");
+        const scale = Math.min(1, 256 / Math.max(img.width, img.height));
+        canvas.width = Math.max(1, Math.round(img.width * scale)); canvas.height = Math.max(1, Math.round(img.height * scale));
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        fotoPerfil = canvas.toDataURL("image/jpeg", 0.82);
+        localStorage.setItem("fotoPerfil", fotoPerfil);
+        ponerAvatar(document.getElementById("avatarPreview"), nombreVisible, fotoPerfil);
+        actualizarNombre();
+    } catch(err) { alert("No se ha podido cargar esa imagen."); }
+});
+
+function guardarNombre(){
+
+    const input =
+        document.getElementById("nameInput");
+
+
+    let nuevoNombre =
+        input.value.trim();
+
+
+    if(!nuevoNombre){
+
+        return;
+
+    }
+
+
+    if(nuevoNombre.length > 20){
+
+        nuevoNombre =
+            nuevoNombre.substring(
+                0,
+                20
+            );
+
+    }
+
+
+    nombreVisible =
+        nuevoNombre;
+
+
+    localStorage.setItem(
+        "visible",
+        nombreVisible
+    );
+
+
+    actualizarNombre();
+
+
+    socket.emit("set-client-key", papusClientKey);
+    socket.emit("set-client-key", papusClientKey);
+    socket.emit("set-username", nombreVisible);
+    socket.emit("profile-update", { nombre: nombreVisible, avatar: fotoPerfil });
+
+    cerrarNombre();
+
+}
+
+
+/* ==================================================
+   ENTER / ESCAPE EN NOMBRE
+================================================== */
+
+document
+    .getElementById("nameInput")
+    .addEventListener(
+        "keydown",
+        (e) => {
+
+            if(e.key === "Enter"){
+
+                guardarNombre();
+
+            }
+
+
+            if(e.key === "Escape"){
+
+                cerrarNombre();
+
+            }
+
+        }
+    );
+
+
+/* ==================================================
+   GENERAL
+================================================== */
+
+let llamadaActiva = false;
+let vistaLlamadaCompleta = false;
+let microfonoLlamadaActivo = true;
+let sonidoLlamadaActivo = true;
+
+function entrarGeneral(){
+    document.getElementById("generalChannel").classList.add("active");
+    document.getElementById("callChannel").classList.remove("active");
+    document.getElementById("topbar").textContent = "💬Chat General💬";
+    const chat = document.getElementById("chat");
+    const bottom = document.getElementById("bottom");
+    const typing = document.getElementById("typingIndicator");
+    const stage = document.getElementById("callStage");
+    const mini = document.getElementById("miniCall");
+    stage.classList.remove("callStageVisible");
+    stage.style.display = "none";
+    chat.classList.remove("chatHidden");
+    chat.style.display = "flex";
+    bottom.classList.remove("bottomHidden");
+    bottom.style.display = "block";
+    typing.classList.remove("typingHidden");
+    typing.style.display = "block";
+    vistaLlamadaCompleta = false;
+    mini.classList.toggle("miniCallVisible", llamadaActiva);
+    mini.style.display = llamadaActiva ? "block" : "none";
+}
+
+function salirDelChat(){
+    if (!llamadaActiva) {
+        llamadaActiva = true;
+        document.getElementById("callStatus").textContent = "Estás en la llamada";
+        renderCallPeople();
+    }
+    mostrarLlamadaCompleta();
+}
+
+function mostrarLlamadaCompleta(){
+    if (!llamadaActiva) return;
+    vistaLlamadaCompleta = true;
+    document.getElementById("generalChannel").classList.remove("active");
+    document.getElementById("callChannel").classList.add("active");
+    document.getElementById("topbar").textContent = "🔊 Llamada";
+    const chat = document.getElementById("chat");
+    const bottom = document.getElementById("bottom");
+    const typing = document.getElementById("typingIndicator");
+    const stage = document.getElementById("callStage");
+    const mini = document.getElementById("miniCall");
+    chat.classList.add("chatHidden");
+    chat.style.display = "none";
+    bottom.classList.add("bottomHidden");
+    bottom.style.display = "none";
+    typing.classList.add("typingHidden");
+    typing.style.display = "none";
+    mini.classList.remove("miniCallVisible");
+    mini.style.display = "none";
+    stage.style.display = "flex";
+    stage.classList.add("callStageVisible");
+}
+
+function colgarLlamada(){
+    llamadaActiva = false;
+    vistaLlamadaCompleta = false;
+    document.getElementById("miniCall").classList.remove("miniCallVisible");
+    document.getElementById("callStage").classList.remove("callStageVisible");
+    document.getElementById("callStage").style.display = "none";
+    entrarGeneral();
+}
+
+function toggleCallControl(id, onIcon, offIcon){
+    const button = document.getElementById(id);
+    const currentlyOn = !button.classList.contains("off");
+    button.classList.toggle("off", currentlyOn);
+    button.textContent = currentlyOn ? offIcon : onIcon;
+    if (id === "micToggle") microfonoLlamadaActivo = !currentlyOn;
+    if (id === "soundToggle") sonidoLlamadaActivo = !currentlyOn;
+}
+
+function makeAttachmentIcon(kind) {
+    if (kind === "zip") {
+        const img = document.createElement("img");
+        img.className = "attachmentZipIcon";
+        img.src = "/zip-icon.png";
+        img.alt = "Archivo comprimido";
+        img.onerror = () => { img.replaceWith(document.createTextNode("🗜️")); };
+        return img;
+    }
+    const icon = document.createElement("div");
+    icon.className = "attachmentIcon";
+    icon.textContent = "📄";
+    return icon;
+}
+
+function agregarMensaje(mensaje){
+
+    const chat =
+        document.getElementById("chat");
+
+
+    const div =
+        document.createElement("div");
+
+
+    div.className = "message";
+    if (mensaje.id) div.dataset.messageId = mensaje.id;
+
+    const header = document.createElement("div");
+    header.className = "messageHeader";
+
+    const usuario =
+        document.createElement("div");
+
+
+    usuario.className =
+        "messageUser";
+
+
+    usuario.textContent =
+        mensaje.usuario;
+
+
+    const texto =
+        document.createElement("div");
+
+
+    texto.className =
+        "messageText";
+
+
+    texto.textContent = mensaje.texto || "";
+
+    header.appendChild(usuario);
+    if (mensaje.ownerKey && mensaje.ownerKey === papusClientKey && mensaje.id) {
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "deleteMessageButton";
+        deleteButton.type = "button";
+        deleteButton.title = "Eliminar este mensaje";
+        deleteButton.setAttribute("aria-label", "Eliminar este mensaje");
+        deleteButton.textContent = "♜";
+        deleteButton.textContent = "🗑";
+        deleteButton.addEventListener("click", async () => {
+            const confirmed = await mostrarConfirmacionPapus({
+                titulo: "Eliminar mensaje",
+                texto: "¿Seguro que quieres eliminar este mensaje?",
+                aceptar: "Eliminar",
+                peligro: true
+            });
+            if (confirmed) socket.emit("delete-message", mensaje.id);
+        });
+        header.appendChild(deleteButton);
+    }
+    div.appendChild(header);
+    if (mensaje.texto) div.appendChild(texto);
+
+    if (mensaje.adjunto && mensaje.adjunto.url && mensaje.adjunto.nombre) {
+        const adj = mensaje.adjunto;
+        const nombreArchivo = String(adj.nombre || "archivo");
+        const ext = (nombreArchivo.split(".").pop() || "").toLowerCase();
+        const tipo = String(adj.tipo || "").toLowerCase();
+        const url = adj.url;
+        const esImagen = tipo.startsWith("image/") || ["png","jpg","jpeg","gif","webp","bmp","avif","svg","heic","heif","jfif","tif","tiff"].includes(ext);
+        const esVideo = tipo.startsWith("video/") || ["mp4","webm","mov","m4v","ogv","ogg","avi","mkv","3gp"].includes(ext);
+        const esAudio = tipo.startsWith("audio/") || ["mp3","wav","ogg","m4a","aac","flac","opus"].includes(ext);
+        const esZip = ["zip","rar","7z","tar","gz","bz2","xz"].includes(ext) || /zip|compressed|rar|archive/.test(tipo);
+
+        const card = document.createElement("div");
+        card.className = "attachmentCard";
+
+        if (esImagen) {
+            const preview = document.createElement("img");
+            preview.className = "attachmentPreview attachmentPreviewImage";
+            preview.src = url;
+            preview.alt = nombreArchivo;
+            preview.loading = "lazy";
+            preview.addEventListener("click", () => window.open(url, "_blank", "noopener"));
+            preview.onerror = () => { preview.replaceWith(makeAttachmentIcon(esZip ? "zip" : "file")); };
+            card.appendChild(preview);
+        } else if (esVideo) {
+            const video = document.createElement("video");
+            video.className = "attachmentPreview attachmentVideo";
+            video.src = url;
+            video.preload = "metadata";
+            video.controls = true;
+            video.playsInline = true;
+            video.addEventListener("loadedmetadata", () => {
+                try { video.currentTime = 0.01; } catch (_) {}
+            }, { once: true });
+            video.addEventListener("seeked", () => { video.pause(); }, { once: true });
+            card.appendChild(video);
+        } else if (esAudio) {
+            const audio = document.createElement("audio");
+            audio.className = "attachmentPreview";
+            audio.controls = true;
+            audio.preload = "metadata";
+            audio.src = url;
+            card.appendChild(audio);
+        } else {
+            const icon = makeAttachmentIcon(esZip ? "zip" : "file");
+            card.appendChild(icon);
+        }
+
+        const meta = document.createElement("div");
+        meta.className = "attachmentMeta";
+        const info = document.createElement("div");
+        info.className = "attachmentInfo";
+        const name = document.createElement("div");
+        name.className = "attachmentName";
+        name.textContent = nombreArchivo;
+        const size = document.createElement("div");
+        size.className = "attachmentSize";
+        size.textContent = formatoTamano(adj.tamaño || 0);
+        info.append(name, size);
+
+        const link = document.createElement("a");
+        link.className = "attachmentDownload";
+        link.href = url;
+        link.download = nombreArchivo;
+        link.textContent = "Descargar";
+        link.rel = "noopener";
+        meta.append(info, link);
+        card.appendChild(meta);
+        div.appendChild(card);
+    }
+
+    chat.appendChild(div);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+/* ==================================================
+   HISTORIAL
+================================================== */
+
+socket.on(
+    "historial",
+    (mensajes) => {
+
+        const chat =
+            document.getElementById("chat");
+
+
+        chat.innerHTML = "";
+
+
+        /*
+         * Si el historial está vacío,
+         * no ponemos ningún mensaje automático.
+         */
+
+        mensajes.forEach(
+            agregarMensaje
+        );
+
+    }
+);
+
+
+/* ==================================================
+   RECIBIR MENSAJE
+================================================== */
+
+socket.on(
+    "chat-message",
+    (mensaje) => {
+
+        agregarMensaje(
+            mensaje
+        );
+
+    }
+);
+
+
+socket.on("message-deleted", (messageId) => {
+    const message = document.querySelector(`[data-message-id="${CSS.escape(String(messageId))}"]`);
+    if (message) message.remove();
+});
+
+/* ==================================================
+   AVISO DE ESCRITURA
+================================================== */
+
+const inputMensaje = document.getElementById("message");
+const typingIndicator = document.getElementById("typingIndicator");
+const usuariosEscribiendo = new Map();
+let temporizadorEscritura;
+
+inputMensaje.addEventListener("input", () => {
+    clearTimeout(temporizadorEscritura);
+
+    if (inputMensaje.value.trim()) {
+        socket.emit("typing");
+        temporizadorEscritura = setTimeout(() => {
+            socket.emit("stop-typing");
+        }, 1500);
+    } else {
+        socket.emit("stop-typing");
+    }
+});
+
+socket.on("user-typing", ({ id, nombre }) => {
+    if (!id || !nombre) return;
+    usuariosEscribiendo.set(id, nombre);
+    actualizarAvisoEscritura();
+});
+
+socket.on("user-stop-typing", (id) => {
+    usuariosEscribiendo.delete(id);
+    actualizarAvisoEscritura();
+});
+
+function actualizarAvisoEscritura() {
+    const nombres = [...usuariosEscribiendo.values()];
+
+    if (nombres.length === 0) {
+        typingIndicator.textContent = "";
+    } else if (nombres.length === 1) {
+        typingIndicator.textContent = nombres[0] + " está escribiendo un mensaje...";
+    } else if (nombres.length === 2) {
+        typingIndicator.textContent = nombres[0] + " y " + nombres[1] + " están escribiendo mensajes...";
+    } else {
+        typingIndicator.textContent = "Varias personas están escribiendo mensajes...";
+    }
+}
+
+
+/* ==================================================
+   ADJUNTAR ARCHIVOS (hasta 5 GB en el servidor local)
+================================================== */
+const fileInput = document.getElementById("fileInput");
+const attachButton = document.getElementById("attachButton");
+const uploadStatus = document.getElementById("uploadStatus");
+const MAX_FILE_BYTES = 5 * 1024 * 1024 * 1024;
+
+function formatoTamano(bytes) {
+    if (!Number.isFinite(Number(bytes)) || Number(bytes) <= 0) return "0 bytes";
+    const unidades = ["bytes", "KB", "MB", "GB", "TB"];
+    let valor = Number(bytes), indice = 0;
+    while (valor >= 1024 && indice < unidades.length - 1) {
+        valor /= 1024;
+        indice++;
+    }
+    return `${valor.toFixed(indice === 0 ? 0 : 2)} ${unidades[indice]}`;
+}
+
+attachButton.addEventListener("click", () => fileInput.click());
+
+fileInput.addEventListener("change", async () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_BYTES) {
+        alert("El límite es de 5 GB por archivo.");
+        fileInput.value = "";
+        return;
+    }
+
+    attachButton.disabled = true;
+    attachButton.textContent = "…";
+    uploadStatus.textContent = `Subiendo ${file.name} (${formatoTamano(file.size)})…`;
+
+    try {
+        const form = new FormData();
+        form.append("file", file, file.name);
+        const response = await fetch("/upload", { method: "POST", body: form });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "Error al subir el archivo.");
+
+        // Revalidar la clave antes de publicar el adjunto para que el mensaje quede asociado a este cliente.
+        socket.emit("set-client-key", papusClientKey);
+        socket.emit("chat-attachment", result);
+        uploadStatus.textContent = `Archivo enviado: ${file.name}`;
+    } catch (error) {
+        uploadStatus.textContent = "";
+        alert(error.message || "No se ha podido subir el archivo.");
+    } finally {
+        attachButton.disabled = false;
+        attachButton.textContent = "📎";
+        fileInput.value = "";
+    }
+});
+
+/* ==================================================
+   ENVIAR MENSAJE
+================================================== */
+
+function sendMessage(){
+
+    const input =
+        document.getElementById("message");
+
+
+    const texto =
+        input.value.trim();
+
+
+    if(!texto){
+
+        return;
+
+    }
+
+
+    // Asegura que el servidor conozca la clave antes de guardar el mensaje.
+    socket.emit("set-client-key", papusClientKey);
+    socket.emit(
+        "chat-message",
+        texto
+    );
+
+
+    input.value = "";
+
+    clearTimeout(temporizadorEscritura);
+    socket.emit("stop-typing");
+
+    input.focus();
+
+}
+
+
+/* ==================================================
+   ENTER PARA ENVIAR
+================================================== */
+
+document
+    .getElementById("message")
+    .addEventListener(
+        "keydown",
+        (e) => {
+
+            if(e.key === "Enter"){
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+
+/* ==================================================
+   USUARIOS EN LÍNEA
+================================================== */
+
+function renderOnlineUsers(){
+    const users = document.getElementById("users");
+    if(!users) return;
+    users.innerHTML = "";
+    usuariosActuales.sort((a,b) => {
+        const yoA=a.id===socket.id, yoB=b.id===socket.id;
+        if(yoA&&!yoB) return -1;
+        if(!yoA&&yoB) return 1;
+        return a.nombre.localeCompare(b.nombre,"es",{sensitivity:"base"});
+    });
+    usuariosActuales.forEach((usuario) => {
+        const div=document.createElement("div");
+        div.className="user";
+        const avatar=document.createElement("span");
+        avatar.className="userAvatar";
+        ponerAvatar(avatar, usuario.nombre, usuario.avatar);
+        const nombre=document.createElement("span");
+        nombre.textContent=usuario.nombre+(usuario.id===socket.id?" (tú)":"");
+        div.append(avatar,nombre);
+        users.appendChild(div);
+    });
+}
+
+socket.on("user-list", (usuarios) => {
+    if (!Array.isArray(usuarios)) return;
+    usuariosActuales = usuarios.map((usuario) => typeof usuario === "string"
+        ? { id: "", nombre: usuario, avatar: "" }
+        : { id: usuario?.id || "", nombre: usuario?.nombre || usuario?.username || "Usuario", avatar: usuario?.avatar || "" });
+    renderOnlineUsers();
+    renderCallPeople();
+});
+
+socket.on("profile-loaded", (perfil) => {
+    if(!perfil || typeof perfil.avatar !== "string") return;
+    if(perfil.avatar){
+        fotoPerfil = perfil.avatar;
+        localStorage.setItem("fotoPerfil", fotoPerfil);
+        actualizarNombre();
+    } else if(fotoPerfil){
+        // Si el navegador ya tenía una foto local, súbela al servidor.
+        socket.emit("profile-update", { nombre: nombreVisible, avatar: fotoPerfil });
+    } else {
+        fotoPerfil = "";
+        localStorage.removeItem("fotoPerfil");
+        actualizarNombre();
+    }
+});
+
+socket.on("profile-updated", (perfil) => {
+    if(!perfil || !perfil.id) return;
+    const usuario = usuariosActuales.find(u => u.id === perfil.id);
+    if(usuario){
+        if(typeof perfil.nombre === "string" && perfil.nombre.trim()) usuario.nombre = perfil.nombre;
+        usuario.avatar = typeof perfil.avatar === "string" ? perfil.avatar : "";
+        // Volver a pintar la lista es necesario: actualizar solo el objeto no cambia el DOM.
+        renderOnlineUsers();
+        renderCallPeople();
+    }
+});
+
+function renderCallPeople(){
+    const container=document.getElementById("callPeople");
+    if(!container) return;
+    const people = usuariosActuales.length ? usuariosActuales : [{id:socket.id,nombre:nombreVisible,avatar:fotoPerfil}];
+    container.innerHTML="";
+    people.forEach(person => {
+        const card=document.createElement("div"); card.className="callPerson";
+        const avatar=document.createElement("div"); avatar.className="callAvatar";
+        ponerAvatar(avatar,person.nombre,person.avatar || (person.id===socket.id ? fotoPerfil : ""));
+        const label=document.createElement("div"); label.className="callPersonName";
+        label.textContent=person.nombre+(person.id===socket.id?" (tú)":"");
+        card.append(avatar,label); container.appendChild(card);
+    });
+}
+
+
+
+/* ==================================================
+   CHAT BORRADO
+================================================== */
+
+socket.on(
+    "chat-cleared",
+    () => {
+
+        const chat =
+            document.getElementById("chat");
+
+
+        /*
+         * Lo dejamos completamente vacío.
+         * No añadimos ningún mensaje automático.
+         */
+
+        chat.innerHTML = "";
+
+    }
+);
+
+
+/* ==================================================
+   OPCIÓN SECRETA
+   CTRL + SHIFT + P
+================================================== */
+
+document.addEventListener(
+    "keydown",
+    async (e) => {
+
+        if(
+            e.ctrlKey &&
+            e.shiftKey &&
+            e.key.toLowerCase() === "p"
+        ){
+
+            e.preventDefault();
+
+
+            const confirmar = await mostrarConfirmacionPapus({
+                titulo: "Borrar todo el chat",
+                texto: "¿Seguro que quieres borrar todos los mensajes de 💬Chat General💬?\n\nEsta acción no se puede deshacer.",
+                aceptar: "Borrar todo",
+                peligro: true
+            });
+
+
+            if(confirmar){
+
+                socket.emit(
+                    "clear-chat"
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ==================================================
+   SELECTORES DE ENTRADA Y SALIDA DE AUDIO
+================================================== */
+
+
+function crearSelectorAudioPersonalizado(select, icono) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "customAudioSelect";
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "customAudioTrigger";
+    trigger.setAttribute("aria-haspopup", "listbox");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.innerHTML = `<span class="customAudioValue"></span><span class="customAudioChevron">▾</span>`;
+    const menu = document.createElement("div");
+    menu.className = "customAudioMenu";
+    menu.setAttribute("role", "listbox");
+    wrapper.append(trigger, menu);
+    select.insertAdjacentElement("afterend", wrapper);
+
+    function refresh() {
+        const valueSpan = trigger.querySelector(".customAudioValue");
+        const chosen = select.options[select.selectedIndex];
+        valueSpan.textContent = chosen ? chosen.textContent : "No disponible";
+        valueSpan.title = valueSpan.textContent;
+        menu.innerHTML = "";
+        [...select.options].forEach(option => {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "customAudioOption" + (option.value === select.value ? " selected" : "");
+            item.setAttribute("role", "option");
+            item.setAttribute("aria-selected", option.value === select.value ? "true" : "false");
+            item.textContent = option.textContent;
+            item.title = option.textContent;
+            item.disabled = option.disabled;
+            item.addEventListener("click", () => {
+                select.value = option.value;
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                refresh();
+                menu.classList.remove("open");
+                trigger.setAttribute("aria-expanded", "false");
+            });
+            menu.appendChild(item);
+        });
+    }
+    trigger.addEventListener("click", () => {
+        const open = menu.classList.toggle("open");
+        trigger.setAttribute("aria-expanded", String(open));
+        if (open) {
+            document.querySelectorAll(".customAudioMenu.open").forEach(other => {
+                if (other !== menu) {
+                    other.classList.remove("open");
+                    const otherTrigger = other.parentElement.querySelector(".customAudioTrigger");
+                    if (otherTrigger) otherTrigger.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
+    });
+    document.addEventListener("click", event => {
+        if (!wrapper.contains(event.target)) {
+            menu.classList.remove("open");
+            trigger.setAttribute("aria-expanded", "false");
+        }
+    });
+    select.addEventListener("change", refresh);
+    refresh();
+    return refresh;
+}
+
+const microphoneSelect = document.getElementById("microphoneSelect");
+const speakerSelect = document.getElementById("speakerSelect");
+const refreshMicrophonePicker = crearSelectorAudioPersonalizado(microphoneSelect, "🎤");
+const refreshSpeakerPicker = crearSelectorAudioPersonalizado(speakerSelect, "🔊");
+
+async function cargarDispositivosAudio(){
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        microphoneSelect.innerHTML = '<option value="">Audio no compatible</option>';
+        speakerSelect.innerHTML = '<option value="">Audio no compatible</option>';
+        return;
+    }
+
+    try {
+        const dispositivos = await navigator.mediaDevices.enumerateDevices();
+        rellenarSelectorAudio(microphoneSelect,
+            dispositivos.filter(d => d.kind === "audioinput"),
+            "No se detectan micrófonos", "Micrófono");
+        rellenarSelectorAudio(speakerSelect,
+            dispositivos.filter(d => d.kind === "audiooutput"),
+            "No se detectan salidas", "Altavoz");
+        refreshMicrophonePicker();
+        refreshSpeakerPicker();
+
+        const microGuardado = localStorage.getItem("papusMicrofonoId");
+        const salidaGuardada = localStorage.getItem("papusAltavozId");
+        if (microGuardado && [...microphoneSelect.options].some(o => o.value === microGuardado)) microphoneSelect.value = microGuardado;
+        if (salidaGuardada && [...speakerSelect.options].some(o => o.value === salidaGuardada)) speakerSelect.value = salidaGuardada;
+        refreshMicrophonePicker();
+        refreshSpeakerPicker();
+    } catch (error) {
+        console.error("No se pudieron consultar los dispositivos de audio:", error);
+        microphoneSelect.innerHTML = '<option value="">No se pudieron cargar</option>';
+        speakerSelect.innerHTML = '<option value="">No se pudieron cargar</option>';
+        refreshMicrophonePicker();
+        refreshSpeakerPicker();
+    }
+}
+
+function rellenarSelectorAudio(select, dispositivos, vacio, etiqueta){
+    const anterior = select.value;
+    select.innerHTML = "";
+    if (!dispositivos.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = vacio;
+        select.appendChild(option);
+        return;
+    }
+    dispositivos.forEach((dispositivo, indice) => {
+        const option = document.createElement("option");
+        option.value = dispositivo.deviceId;
+        option.textContent = dispositivo.label || `${etiqueta} ${indice + 1}`;
+        select.appendChild(option);
+    });
+    if ([...select.options].some(option => option.value === anterior)) select.value = anterior;
+}
+
+microphoneSelect.addEventListener("change", () => {
+    localStorage.setItem("papusMicrofonoId", microphoneSelect.value);
+    // La selección queda guardada para usarla al crear/renovar la captura de audio.
+});
+
+speakerSelect.addEventListener("change", () => {
+    localStorage.setItem("papusAltavozId", speakerSelect.value);
+    // La salida elegida queda guardada. Para aplicarla al audio remoto debe usarse setSinkId
+    // en el elemento de audio que reproduzca la llamada.
+});
+
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+    navigator.mediaDevices.addEventListener("devicechange", cargarDispositivosAudio);
+}
+cargarDispositivosAudio();
+
+</script>
+
+</body>
+
+</html>
