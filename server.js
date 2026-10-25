@@ -11,7 +11,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = __dirname;
+const PUBLIC_DIR = path.join(__dirname, "public");
 const PERFILES_FILE = path.join(__dirname, "perfiles.json");
 const UPLOADS_DIR = path.join(__dirname, "uploads");
 const MAX_FILE_BYTES = 5 * 1024 * 1024 * 1024;
@@ -322,13 +322,26 @@ io.on("connection", socket => {
     socket.on("join-call", () => {
         if (!usuariosConectados.has(socket.id)) return;
 
+        const yaEstaba = participantesLlamada.has(socket.id);
         participantesLlamada.add(socket.id);
+        if (!yaEstaba) {
+            participantesLlamada.forEach(id => {
+                if (id !== socket.id) io.to(id).emit("call-peer-joined", {id: socket.id});
+            });
+        }
         emitirParticipantesLlamada();
+    });
+
+    // Retransmitir la señalización WebRTC solo entre participantes de la llamada.
+    socket.on("call-signal", data => {
+        if (!participantesLlamada.has(socket.id) || !data || typeof data.to !== "string" || !participantesLlamada.has(data.to) || !data.signal || typeof data.signal !== "object") return;
+        io.to(data.to).emit("call-signal", {from: socket.id, signal: data.signal});
     });
 
     // Salir de la llamada
     socket.on("leave-call", () => {
         participantesLlamada.delete(socket.id);
+        participantesLlamada.forEach(id => io.to(id).emit("call-peer-left", {id: socket.id}));
         emitirParticipantesLlamada();
     });
 
@@ -354,6 +367,7 @@ io.on("connection", socket => {
         usuariosConectados.delete(socket.id);
         clavesCliente.delete(socket.id);
         participantesLlamada.delete(socket.id);
+        participantesLlamada.forEach(id => io.to(id).emit("call-peer-left", {id: socket.id}));
 
         emitirListaUsuarios();
         emitirParticipantesLlamada();

@@ -378,7 +378,8 @@ main{
 .callTitle{font-size:22px;font-weight:700}
 .callSubtitle{font-size:13px;color:#94a3b8;margin-top:-16px}
 .callPeople{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap}
-.callPerson{width:190px;height:190px;border-radius:18px;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:2px solid #243247}
+.callPerson{width:190px;height:190px;border-radius:18px;background:#111827;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:2px solid #243247;transition:border-color .15s,box-shadow .15s}
+.callPerson.speaking{border-color:#22c55e;box-shadow:0 0 0 2px #22c55e55,0 0 22px #22c55e35}
 .callAvatar{width:90px;height:90px;border-radius:50%;background:#5865f2;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:700;color:white;object-fit:cover}
 .callPersonName{font-size:14px;font-weight:600}
 .callControls{display:flex;gap:12px;align-items:center;justify-content:center}
@@ -723,7 +724,7 @@ main{position:relative;min-width:0}
 
     <div class="bottomProfile">
 
-        <span class="bottomName" id="bottomName"><img class="bottomAvatar" id="bottomAvatar" alt="" style="vertical-align:middle;margin-right:6px"> <span id="bottomNameText">Usuario</span></span>
+        <span class="bottomName" id="bottomName"><span class="bottomAvatar" id="bottomAvatar" aria-label="Foto de perfil" style="vertical-align:middle;margin-right:6px">U</span> <span id="bottomNameText">Usuario</span></span>
 
 
         <div class="audioOption">
@@ -969,6 +970,20 @@ let nombreVisible =
 
 let fotoPerfil = localStorage.getItem("fotoPerfil") || "";
 let usuariosActuales = [];
+let participantesLlamada = [];
+let microfonoStreamLlamada = null;
+let contextoAudioLlamada = null;
+let analizadorAudioLlamada = null;
+let frameDeteccionVoz = null;
+let yoEstoyHablando = false;
+// Declara el estado de la llamada antes de actualizarNombre(), que renderiza las tarjetas.
+let llamadaActiva = false;
+let vistaLlamadaCompleta = false;
+let microfonoLlamadaActivo = true;
+let sonidoLlamadaActivo = true;
+const conexionesLlamada = new Map();
+const audiosRemotos = new Map();
+const rtcConfigLlamada = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
 function iniciales(nombre){ return (String(nombre || "U").trim()[0] || "U").toUpperCase(); }
 function ponerAvatar(elemento, nombre, foto){
@@ -1137,7 +1152,7 @@ function guardarNombre(){
     socket.emit("set-client-key", papusClientKey);
     socket.emit("set-client-key", papusClientKey);
     socket.emit("set-username", nombreVisible);
-    socket.emit("profile-update", { nombre: nombreVisible, avatar: fotoPerfil });
+    socket.emit("set-profile-photo", { foto: fotoPerfil });
 
     cerrarNombre();
 
@@ -1175,11 +1190,6 @@ document
    GENERAL
 ================================================== */
 
-let llamadaActiva = false;
-let vistaLlamadaCompleta = false;
-let microfonoLlamadaActivo = true;
-let sonidoLlamadaActivo = true;
-
 function entrarGeneral(){
     document.getElementById("generalChannel").classList.add("active");
     document.getElementById("callChannel").classList.remove("active");
@@ -1205,8 +1215,13 @@ function entrarGeneral(){
 function salirDelChat(){
     if (!llamadaActiva) {
         llamadaActiva = true;
-        document.getElementById("callStatus").textContent = "Estás en la llamada";
-        renderCallPeople();
+        document.getElementById("callStatus").textContent = "Conectando micrófono…";
+        iniciarDeteccionVozLlamada().then(() => {
+            if (!llamadaActiva) return;
+            socket.emit("join-call");
+            document.getElementById("callStatus").textContent = "Estás en la llamada";
+            renderCallPeople();
+        }).catch(() => {});
     }
     mostrarLlamadaCompleta();
 }
@@ -1235,6 +1250,9 @@ function mostrarLlamadaCompleta(){
 }
 
 function colgarLlamada(){
+    socket.emit("leave-call");
+    cerrarConexionesLlamada();
+    detenerDeteccionVozLlamada();
     llamadaActiva = false;
     vistaLlamadaCompleta = false;
     document.getElementById("miniCall").classList.remove("miniCallVisible");
@@ -1248,8 +1266,16 @@ function toggleCallControl(id, onIcon, offIcon){
     const currentlyOn = !button.classList.contains("off");
     button.classList.toggle("off", currentlyOn);
     button.textContent = currentlyOn ? offIcon : onIcon;
-    if (id === "micToggle") microfonoLlamadaActivo = !currentlyOn;
-    if (id === "soundToggle") sonidoLlamadaActivo = !currentlyOn;
+    if (id === "micToggle") {
+        microfonoLlamadaActivo = !currentlyOn;
+        if (microfonoStreamLlamada) microfonoStreamLlamada.getAudioTracks().forEach(track => track.enabled = microfonoLlamadaActivo);
+        if (microfonoLlamadaActivo && llamadaActiva) iniciarDeteccionVozLlamada();
+        else { yoEstoyHablando = false; document.querySelectorAll(".callPerson.speaking").forEach(card => card.classList.remove("speaking")); }
+    }
+    if (id === "soundToggle") {
+        sonidoLlamadaActivo = !currentlyOn;
+        audiosRemotos.forEach(audio => audio.muted = !sonidoLlamadaActivo);
+    }
 }
 
 function makeAttachmentIcon(kind) {
@@ -1650,55 +1676,199 @@ socket.on("user-list", (usuarios) => {
     if (!Array.isArray(usuarios)) return;
     usuariosActuales = usuarios.map((usuario) => typeof usuario === "string"
         ? { id: "", nombre: usuario, avatar: "" }
-        : { id: usuario?.id || "", nombre: usuario?.nombre || usuario?.username || "Usuario", avatar: usuario?.avatar || "" });
+        : { id: usuario?.id || "", nombre: usuario?.nombre || usuario?.username || "Usuario", avatar: usuario?.foto || usuario?.avatar || "" });
     renderOnlineUsers();
     renderCallPeople();
 });
 
-socket.on("profile-loaded", (perfil) => {
-    if(!perfil || typeof perfil.avatar !== "string") return;
-    if(perfil.avatar){
-        fotoPerfil = perfil.avatar;
+// El servidor envía los perfiles guardados y la lista real de participantes de voz.
+socket.on("profiles-loaded", (perfiles) => {
+    if (!perfiles || typeof perfiles !== "object") return;
+    usuariosActuales = usuariosActuales.map(u => ({...u, avatar: (perfiles[u.nombre]?.foto || perfiles[u.nombre]?.avatar || u.avatar || "")}));
+    const propio = perfiles[nombreVisible];
+    if (propio && (propio.foto || propio.avatar)) {
+        fotoPerfil = propio.foto || propio.avatar;
         localStorage.setItem("fotoPerfil", fotoPerfil);
         actualizarNombre();
-    } else if(fotoPerfil){
-        // Si el navegador ya tenía una foto local, súbela al servidor.
-        socket.emit("profile-update", { nombre: nombreVisible, avatar: fotoPerfil });
-    } else {
-        fotoPerfil = "";
-        localStorage.removeItem("fotoPerfil");
-        actualizarNombre();
+    } else if (fotoPerfil) {
+        socket.emit("set-profile-photo", {foto: fotoPerfil});
     }
+    renderOnlineUsers(); renderCallPeople();
 });
 
-socket.on("profile-updated", (perfil) => {
-    if(!perfil || !perfil.id) return;
+socket.on("call-participants", (participants) => {
+    if (!Array.isArray(participants)) return;
+    participantesLlamada = participants.map(p => ({
+        id: p.id || "", nombre: p.nombre || "Usuario",
+        avatar: p.foto || p.avatar || "",
+        microfonoSilenciado: !!p.microfonoSilenciado
+    }));
+    renderCallPeople();
+});
+
+socket.on("profile-photo-updated", (perfil) => {
+    if (!perfil || !perfil.id) return;
+    const foto = perfil.foto || perfil.avatar || "";
     const usuario = usuariosActuales.find(u => u.id === perfil.id);
-    if(usuario){
-        if(typeof perfil.nombre === "string" && perfil.nombre.trim()) usuario.nombre = perfil.nombre;
-        usuario.avatar = typeof perfil.avatar === "string" ? perfil.avatar : "";
-        // Volver a pintar la lista es necesario: actualizar solo el objeto no cambia el DOM.
-        renderOnlineUsers();
-        renderCallPeople();
+    if (usuario) usuario.avatar = foto;
+    const participante = participantesLlamada.find(u => u.id === perfil.id);
+    if (participante) participante.avatar = foto;
+    if (perfil.id === socket.id) {
+        fotoPerfil = foto;
+        if (foto) localStorage.setItem("fotoPerfil", foto); else localStorage.removeItem("fotoPerfil");
+        actualizarNombre();
     }
+    renderOnlineUsers(); renderCallPeople();
+});
+
+// Compatibilidad con eventos de perfil de versiones anteriores.
+socket.on("profile-loaded", (perfil) => {
+    if (!perfil) return;
+    const foto = perfil.foto || perfil.avatar || "";
+    if (foto) { fotoPerfil = foto; localStorage.setItem("fotoPerfil", foto); actualizarNombre(); }
+    else if (fotoPerfil) socket.emit("set-profile-photo", {foto: fotoPerfil});
+});
+socket.on("profile-updated", (perfil) => {
+    if (!perfil || !perfil.id) return;
+    const usuario = usuariosActuales.find(u => u.id === perfil.id);
+    if (usuario) { usuario.nombre = perfil.nombre || usuario.nombre; usuario.avatar = perfil.foto || perfil.avatar || ""; }
+    renderOnlineUsers(); renderCallPeople();
 });
 
 function renderCallPeople(){
-    const container=document.getElementById("callPeople");
-    if(!container) return;
-    const people = usuariosActuales.length ? usuariosActuales : [{id:socket.id,nombre:nombreVisible,avatar:fotoPerfil}];
-    container.innerHTML="";
+    const container = document.getElementById("callPeople");
+    if (!container) return;
+    // No mostramos a todos los conectados al chat: solo a quienes entraron en la llamada.
+    const people = participantesLlamada.slice();
+    if (llamadaActiva && socket.id && !people.some(p => p.id === socket.id)) {
+        people.unshift({id: socket.id, nombre: nombreVisible, avatar: fotoPerfil});
+    }
+    container.innerHTML = "";
     people.forEach(person => {
-        const card=document.createElement("div"); card.className="callPerson";
-        const avatar=document.createElement("div"); avatar.className="callAvatar";
-        ponerAvatar(avatar,person.nombre,person.avatar || (person.id===socket.id ? fotoPerfil : ""));
-        const label=document.createElement("div"); label.className="callPersonName";
-        label.textContent=person.nombre+(person.id===socket.id?" (tú)":"");
-        card.append(avatar,label); container.appendChild(card);
+        const card = document.createElement("div");
+        card.className = "callPerson" + ((person.id === socket.id && yoEstoyHablando) ? " speaking" : "");
+        card.dataset.userId = person.id;
+        const avatar = document.createElement("div"); avatar.className = "callAvatar";
+        ponerAvatar(avatar, person.nombre, person.avatar || (person.id === socket.id ? fotoPerfil : ""));
+        const label = document.createElement("div"); label.className = "callPersonName";
+        label.textContent = person.nombre + (person.id === socket.id ? " (tú)" : "");
+        card.append(avatar, label); container.appendChild(card);
     });
 }
 
+async function iniciarDeteccionVozLlamada(){
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Este navegador no permite acceder al micrófono.");
+    if (!microfonoStreamLlamada) {
+        const deviceId = typeof microphoneSelect !== "undefined" ? microphoneSelect.value : "";
+        microfonoStreamLlamada = await navigator.mediaDevices.getUserMedia({audio: deviceId ? {deviceId: {exact: deviceId}} : true});
+        microfonoStreamLlamada.getAudioTracks().forEach(track => track.enabled = microfonoLlamadaActivo);
+    }
+    // Añadir el micrófono a conexiones que ya estén establecidas.
+    conexionesLlamada.forEach(pc => {
+        if (!pc.getSenders().some(sender => sender.track?.kind === "audio")) {
+            microfonoStreamLlamada.getAudioTracks().forEach(track => pc.addTrack(track, microfonoStreamLlamada));
+        }
+    });
+    if (frameDeteccionVoz !== null) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    contextoAudioLlamada = new AudioContextClass();
+    const source = contextoAudioLlamada.createMediaStreamSource(microfonoStreamLlamada);
+    analizadorAudioLlamada = contextoAudioLlamada.createAnalyser();
+    analizadorAudioLlamada.fftSize = 512;
+    source.connect(analizadorAudioLlamada);
+    const datos = new Uint8Array(analizadorAudioLlamada.fftSize);
+    const revisar = () => {
+        if (!analizadorAudioLlamada || !llamadaActiva) return;
+        analizadorAudioLlamada.getByteTimeDomainData(datos);
+        let suma = 0;
+        for (const v of datos) { const n = (v - 128) / 128; suma += n*n; }
+        const hablando = microfonoLlamadaActivo && Math.sqrt(suma / datos.length) > 0.035;
+        if (hablando !== yoEstoyHablando) {
+            yoEstoyHablando = hablando;
+            const card = document.querySelector('.callPerson[data-user-id="' + socket.id + '"]');
+            if (card) card.classList.toggle("speaking", hablando);
+        }
+        frameDeteccionVoz = requestAnimationFrame(revisar);
+    };
+    revisar();
+}
 
+function crearConexionLlamada(peerId){
+    if (!peerId || peerId === socket.id || conexionesLlamada.has(peerId)) return conexionesLlamada.get(peerId);
+    const pc = new RTCPeerConnection(rtcConfigLlamada);
+    conexionesLlamada.set(peerId, pc);
+    if (microfonoStreamLlamada) microfonoStreamLlamada.getAudioTracks().forEach(track => pc.addTrack(track, microfonoStreamLlamada));
+    pc.onicecandidate = event => { if (event.candidate) socket.emit("call-signal", {to: peerId, signal: {candidate: event.candidate}}); };
+    pc.ontrack = event => {
+        let audio = audiosRemotos.get(peerId);
+        if (!audio) {
+            audio = document.createElement("audio"); audio.autoplay = true; audio.playsInline = true;
+            audio.dataset.peerId = peerId; document.body.appendChild(audio); audiosRemotos.set(peerId, audio);
+        }
+        audio.srcObject = event.streams[0]; audio.muted = !sonidoLlamadaActivo;
+        aplicarSalidaAudio(audio);
+        audio.play().catch(() => {
+            const status = document.getElementById("callStatus");
+            if (status) status.textContent = "Pulsa la página para permitir reproducir el audio.";
+        });
+    };
+    pc.onconnectionstatechange = () => {
+        if (["failed", "closed"].includes(pc.connectionState)) quitarConexionLlamada(peerId);
+    };
+    return pc;
+}
+
+async function negociarConPeer(peerId){
+    try {
+        await iniciarDeteccionVozLlamada();
+        const pc = crearConexionLlamada(peerId); if (!pc) return;
+        const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+        socket.emit("call-signal", {to: peerId, signal: {description: pc.localDescription}});
+    } catch (error) { console.error("No se pudo iniciar la llamada con", peerId, error); }
+}
+
+socket.on("call-peer-joined", ({id}) => { if (llamadaActiva && id) negociarConPeer(id); });
+socket.on("call-signal", async ({from, signal}) => {
+    if (!llamadaActiva || !from || !signal) return;
+    try {
+        const pc = crearConexionLlamada(from); if (!pc) return;
+        if (signal.description) {
+            await pc.setRemoteDescription(new RTCSessionDescription(signal.description));
+            if (signal.description.type === "offer") {
+                await iniciarDeteccionVozLlamada();
+                const answer = await pc.createAnswer(); await pc.setLocalDescription(answer);
+                socket.emit("call-signal", {to: from, signal: {description: pc.localDescription}});
+            }
+        } else if (signal.candidate) {
+            await pc.addIceCandidate(new RTCIceCandidate(signal.candidate));
+        }
+    } catch (error) { console.error("Error de conexión de audio", error); }
+});
+socket.on("call-peer-left", ({id}) => quitarConexionLlamada(id));
+
+function aplicarSalidaAudio(audio){
+    const salida = typeof speakerSelect !== "undefined" ? speakerSelect.value : "";
+    if (salida && typeof audio.setSinkId === "function") audio.setSinkId(salida).catch(()=>{});
+}
+function quitarConexionLlamada(peerId){
+    const pc = conexionesLlamada.get(peerId);
+    if (pc) { pc.ontrack = null; pc.close(); conexionesLlamada.delete(peerId); }
+    const audio = audiosRemotos.get(peerId);
+    if (audio) { audio.srcObject = null; audio.remove(); audiosRemotos.delete(peerId); }
+}
+function cerrarConexionesLlamada(){ [...conexionesLlamada.keys()].forEach(quitarConexionLlamada); }
+
+function detenerDeteccionVozLlamada(){
+    if (frameDeteccionVoz !== null) cancelAnimationFrame(frameDeteccionVoz);
+    frameDeteccionVoz = null;
+    if (contextoAudioLlamada) contextoAudioLlamada.close().catch(()=>{});
+    contextoAudioLlamada = null; analizadorAudioLlamada = null;
+    if (microfonoStreamLlamada) microfonoStreamLlamada.getTracks().forEach(track => track.stop());
+    microfonoStreamLlamada = null;
+    yoEstoyHablando = false;
+    document.querySelectorAll(".callPerson.speaking").forEach(card => card.classList.remove("speaking"));
+}
 
 /* ==================================================
    CHAT BORRADO
@@ -1896,6 +2066,7 @@ microphoneSelect.addEventListener("change", () => {
 
 speakerSelect.addEventListener("change", () => {
     localStorage.setItem("papusAltavozId", speakerSelect.value);
+    audiosRemotos.forEach(aplicarSalidaAudio);
     // La salida elegida queda guardada. Para aplicarla al audio remoto debe usarse setSinkId
     // en el elemento de audio que reproduzca la llamada.
 });
