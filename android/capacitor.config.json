@@ -1,0 +1,12 @@
+{
+  "appId": "com.papuschat.app",
+  "appName": "Papus Chat",
+  "webDir": "www",
+  "server": {
+    "url": "https://papus-chat.onrender.com/",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
