@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Papus Chat</title>
 
@@ -639,11 +639,83 @@ main{position:relative;min-width:0}
     .papusConfirmButton{width:100%}
 }
 
+
+/* PAPUS CHAT: RESPONSIVE MOVIL + SPLASH GLOBAL */
+#mobileMenuButton{display:none;border:0;color:#f2f3f5;background:#1e293b;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:21px;line-height:1}
+#mobileBackdrop{display:none}
+@media(max-width:760px){
+ html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
+ body{font-size:15px}
+ #app{display:flex;width:100%;height:100%;height:100dvh;min-height:0;position:relative;overflow:hidden}
+ aside{position:fixed!important;z-index:1001;left:0;top:0;bottom:0;width:min(86vw,330px)!important;min-width:0!important;height:100%;height:100dvh;padding:14px 14px calc(14px + env(safe-area-inset-bottom))!important;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-105%);transition:transform .23s ease;box-shadow:16px 0 40px rgba(0,0,0,.4)}
+ aside.mobileOpen{transform:translateX(0)}
+ #mobileBackdrop{display:block;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.58);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
+ #mobileBackdrop.show{opacity:1;visibility:visible}
+ main{display:flex;flex:1;width:100%;height:100%;height:100dvh;min-width:0;min-height:0;overflow:hidden}
+ .topbar{height:56px!important;min-height:56px!important;flex-shrink:0;padding:0 10px 0 56px!important;gap:8px;position:relative}
+ #mobileMenuButton{display:flex;position:absolute;left:11px;top:10px;width:36px;height:36px;z-index:5}
+ .topbarTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
+ #chat{flex:1;min-height:0;min-width:0;overflow-x:hidden;padding:12px 10px 14px;gap:9px}
+ .message{max-width:92%;width:fit-content;min-width:0;padding:10px 11px;border-radius:12px;overflow-wrap:anywhere}
+ .message img,.message video,.message audio{max-width:100%}
+ #bottom{width:100%;padding:8px 9px calc(9px + env(safe-area-inset-bottom))!important;flex-shrink:0}
+ #inputBox{display:flex;gap:7px;align-items:center;width:100%;min-width:0}
+ #attachButton{width:42px!important;height:44px!important;flex:0 0 42px!important;border-radius:13px!important}
+ #message{height:44px!important;flex:1 1 auto;min-width:0;width:0;padding:0 11px!important;font-size:16px!important;border-radius:13px!important}
+ #send{height:44px!important;flex:0 0 auto;padding:0 12px!important;border-radius:13px!important;font-size:14px}
+ .uploadStatus{padding:4px 5px 0!important;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .logo img{width:min(190px,70vw)}
+ .profile{padding:10px;margin-bottom:10px}
+ .channel{padding:11px 9px;font-size:15px}
+ .user{padding:7px 5px;font-size:14px}
+ .section{font-size:11px;margin-top:13px}
+ .bottomProfile{padding:10px;margin-top:12px}
+ .audioOption{gap:7px}
+ .customAudioSelect{max-width:none!important;width:100%;min-width:0}
+ .customAudioTrigger{max-width:100%}
+ .customAudioMenu{max-width:calc(86vw - 35px)}
+ #callStage{padding:14px 10px;gap:14px;min-height:0;overflow:auto}
+ .callTitle{font-size:19px;text-align:center}
+ .callSubtitle{font-size:12px;text-align:center}
+ .callPeople{width:100%;gap:10px;overflow:auto;align-content:flex-start}
+ .callPerson{width:min(44vw,190px);height:min(44vw,190px);min-width:130px;min-height:130px;border-radius:15px}
+ .callAvatar{width:68px;height:68px;font-size:28px}
+ .callControls{gap:9px;flex-wrap:wrap}
+ .callControl{width:46px;height:46px}
+ .callControl.hangup{width:54px}
+ #miniCall{top:62px;right:10px;width:min(300px,calc(100vw - 20px))}
+ .nameBox{width:calc(100vw - 28px);max-width:350px;padding:20px}
+ input,button,select,textarea{font-size:16px}
+ img,video,canvas{max-width:100%}
+}
+@media(max-width:380px){
+ #bottom{padding-left:6px!important;padding-right:6px!important}
+ #inputBox{gap:5px}
+ #attachButton{width:38px!important;flex-basis:38px!important}
+ #send{padding:0 9px!important}
+ .topbarTitle{font-size:14px}
+}
+#papusSplash{position:fixed;inset:0;z-index:2147483647;background:#0b1220;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .55s ease,visibility .55s ease}
+#papusSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#papusSplash img{display:block;width:min(72vw,360px);max-height:55vh;object-fit:contain;filter:drop-shadow(0 14px 30px rgba(88,101,242,.24))}
+.papusLoadingDots{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:20px;height:20px}
+.papusLoadingDots span{display:block;width:9px;height:9px;border-radius:50%;background:#a5b4fc;animation:papusDot 1.1s infinite ease-in-out}
+.papusLoadingDots span:nth-child(2){animation-delay:.16s}
+.papusLoadingDots span:nth-child(3){animation-delay:.32s}
+@keyframes papusDot{0%,70%,100%{transform:translateY(0);opacity:.35}35%{transform:translateY(-7px);opacity:1}}
+@media(prefers-reduced-motion:reduce){.papusLoadingDots span{animation-duration:2.2s}#papusSplash{transition-duration:.15s}}
+
 </style>
 
 </head>
 
 <body>
+
+<div id="papusSplash" role="status" aria-label="Cargando Papus Chat">
+  <img src="papus-chat.png" alt="Papus Chat">
+  <div class="papusLoadingDots" aria-hidden="true"><span></span><span></span><span></span></div>
+</div>
+<div id="mobileBackdrop" aria-hidden="true"></div>
 
 <div id="app">
 
@@ -753,6 +825,7 @@ main{position:relative;min-width:0}
 <main>
 
     <div class="topbar" id="topbar">
+        <button id="mobileMenuButton" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
         <span class="topbarTitle">💬Chat General💬</span>
     </div>
 
@@ -2076,6 +2149,34 @@ if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
 }
 cargarDispositivosAudio();
 
+</script>
+
+
+<script>
+(function(){
+  function initPapusMobileMenu(){
+    var button=document.getElementById('mobileMenuButton'),sidebar=document.querySelector('aside'),backdrop=document.getElementById('mobileBackdrop');
+    if(!button||!sidebar||!backdrop)return;
+    function openMenu(){sidebar.classList.add('mobileOpen');backdrop.classList.add('show');button.setAttribute('aria-expanded','true');backdrop.setAttribute('aria-hidden','false')}
+    function closeMenu(){sidebar.classList.remove('mobileOpen');backdrop.classList.remove('show');button.setAttribute('aria-expanded','false');backdrop.setAttribute('aria-hidden','true')}
+    button.addEventListener('click',function(e){e.stopPropagation();sidebar.classList.contains('mobileOpen')?closeMenu():openMenu()});
+    backdrop.addEventListener('click',closeMenu);
+    sidebar.querySelectorAll('.channel,.user,.profile').forEach(function(item){item.addEventListener('click',function(){window.setTimeout(closeMenu,100)})});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+    window.addEventListener('resize',function(){if(window.innerWidth>760)closeMenu()});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPapusMobileMenu);else initPapusMobileMenu();
+})();
+(function(){
+  var hidden=false;
+  function hideSplash(){
+    if(hidden)return;hidden=true;
+    var splash=document.getElementById('papusSplash');if(!splash)return;
+    window.setTimeout(function(){splash.classList.add('hide');window.setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash)},650)},1100);
+  }
+  if(document.readyState==='complete')hideSplash();else window.addEventListener('load',hideSplash,{once:true});
+  window.setTimeout(hideSplash,5000);
+})();
 </script>
 
 </body>
