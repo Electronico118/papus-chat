@@ -1,83 +1,77 @@
 name: Build Papus Chat apps
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
 
 jobs:
-  windows-installer:
-    name: Build Windows installer
-    runs-on: windows-latest
+windows-installer:
+name: Build Windows installer
+runs-on: windows-latest
 
-    steps:
-      - name: Download repository
-        uses: actions/checkout@v4
+steps:
+  - name: Download repository
+    uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+  - name: Set up Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22
 
-      - name: Prepare Electron app
-        working-directory: desktop
-        run: |
-          npm install
-          npm run build
+  - name: Prepare Electron app
+    working-directory: desktop
+    run: |
+      npm install
+      npm run build
 
-      - name: Upload Windows installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: Papus-Chat-Windows-Setup
-          path: desktop/dist/*.exe
-          if-no-files-found: error
+  - name: Upload Windows installer
+    uses: actions/upload-artifact@v4
+    with:
+      name: Papus-Chat-Windows-Setup
+      path: desktop/dist/*.exe
+      if-no-files-found: error
+```
 
-  android-apk:
-    name: Build Android APK
-    runs-on: ubuntu-latest
+android-apk:
+name: Build Android APK
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Download repository
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Download repository
+    uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+  - name: Set up Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 22
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
+  - name: Set up Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: 21
 
+  - name: Install Capacitor
+    working-directory: android
+    run: npm install
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools'
+  - name: Create Android project
+    working-directory: android
+    run: npx cap add android
 
+  - name: Synchronize Android project
+    working-directory: android
+    run: npx cap sync android
 
+  - name: Build APK
+    working-directory: android/android
+    run: |
+      chmod +x gradlew
+      ./gradlew assembleDebug
 
-      - name: Install Capacitor
-        working-directory: android
-        run: npm install
-
-      - name: Create Android project
-        working-directory: android
-        run: npx cap add android
-
-      - name: Synchronize Android project
-        working-directory: android
-        run: npx cap sync android
-
-      - name: Build APK
-        working-directory: android/android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload Android APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Papus-Chat-Android-APK
-          path: android/android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+  - name: Upload Android APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Papus-Chat-Android-APK
+      path: android/android/app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
