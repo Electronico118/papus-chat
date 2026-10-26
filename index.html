@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Papus Chat</title>
 
@@ -639,83 +639,11 @@ main{position:relative;min-width:0}
     .papusConfirmButton{width:100%}
 }
 
-
-/* PAPUS CHAT: RESPONSIVE MOVIL + SPLASH GLOBAL */
-#mobileMenuButton{display:none;border:0;color:#f2f3f5;background:#1e293b;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:21px;line-height:1}
-#mobileBackdrop{display:none}
-@media(max-width:760px){
- html,body{width:100%;height:100%;height:100dvh;overflow:hidden}
- body{font-size:15px}
- #app{display:flex;width:100%;height:100%;height:100dvh;min-height:0;position:relative;overflow:hidden}
- aside{position:fixed!important;z-index:1001;left:0;top:0;bottom:0;width:min(86vw,330px)!important;min-width:0!important;height:100%;height:100dvh;padding:14px 14px calc(14px + env(safe-area-inset-bottom))!important;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-105%);transition:transform .23s ease;box-shadow:16px 0 40px rgba(0,0,0,.4)}
- aside.mobileOpen{transform:translateX(0)}
- #mobileBackdrop{display:block;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.58);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease}
- #mobileBackdrop.show{opacity:1;visibility:visible}
- main{display:flex;flex:1;width:100%;height:100%;height:100dvh;min-width:0;min-height:0;overflow:hidden}
- .topbar{height:56px!important;min-height:56px!important;flex-shrink:0;padding:0 10px 0 56px!important;gap:8px;position:relative}
- #mobileMenuButton{display:flex;position:absolute;left:11px;top:10px;width:36px;height:36px;z-index:5}
- .topbarTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
- #chat{flex:1;min-height:0;min-width:0;overflow-x:hidden;padding:12px 10px 14px;gap:9px}
- .message{max-width:92%;width:fit-content;min-width:0;padding:10px 11px;border-radius:12px;overflow-wrap:anywhere}
- .message img,.message video,.message audio{max-width:100%}
- #bottom{width:100%;padding:8px 9px calc(9px + env(safe-area-inset-bottom))!important;flex-shrink:0}
- #inputBox{display:flex;gap:7px;align-items:center;width:100%;min-width:0}
- #attachButton{width:42px!important;height:44px!important;flex:0 0 42px!important;border-radius:13px!important}
- #message{height:44px!important;flex:1 1 auto;min-width:0;width:0;padding:0 11px!important;font-size:16px!important;border-radius:13px!important}
- #send{height:44px!important;flex:0 0 auto;padding:0 12px!important;border-radius:13px!important;font-size:14px}
- .uploadStatus{padding:4px 5px 0!important;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
- .logo img{width:min(190px,70vw)}
- .profile{padding:10px;margin-bottom:10px}
- .channel{padding:11px 9px;font-size:15px}
- .user{padding:7px 5px;font-size:14px}
- .section{font-size:11px;margin-top:13px}
- .bottomProfile{padding:10px;margin-top:12px}
- .audioOption{gap:7px}
- .customAudioSelect{max-width:none!important;width:100%;min-width:0}
- .customAudioTrigger{max-width:100%}
- .customAudioMenu{max-width:calc(86vw - 35px)}
- #callStage{padding:14px 10px;gap:14px;min-height:0;overflow:auto}
- .callTitle{font-size:19px;text-align:center}
- .callSubtitle{font-size:12px;text-align:center}
- .callPeople{width:100%;gap:10px;overflow:auto;align-content:flex-start}
- .callPerson{width:min(44vw,190px);height:min(44vw,190px);min-width:130px;min-height:130px;border-radius:15px}
- .callAvatar{width:68px;height:68px;font-size:28px}
- .callControls{gap:9px;flex-wrap:wrap}
- .callControl{width:46px;height:46px}
- .callControl.hangup{width:54px}
- #miniCall{top:62px;right:10px;width:min(300px,calc(100vw - 20px))}
- .nameBox{width:calc(100vw - 28px);max-width:350px;padding:20px}
- input,button,select,textarea{font-size:16px}
- img,video,canvas{max-width:100%}
-}
-@media(max-width:380px){
- #bottom{padding-left:6px!important;padding-right:6px!important}
- #inputBox{gap:5px}
- #attachButton{width:38px!important;flex-basis:38px!important}
- #send{padding:0 9px!important}
- .topbarTitle{font-size:14px}
-}
-#papusSplash{position:fixed;inset:0;z-index:2147483647;background:#0b1220;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .55s ease,visibility .55s ease}
-#papusSplash.hide{opacity:0;visibility:hidden;pointer-events:none}
-#papusSplash img{display:block;width:min(72vw,360px);max-height:55vh;object-fit:contain;filter:drop-shadow(0 14px 30px rgba(88,101,242,.24))}
-.papusLoadingDots{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:20px;height:20px}
-.papusLoadingDots span{display:block;width:9px;height:9px;border-radius:50%;background:#a5b4fc;animation:papusDot 1.1s infinite ease-in-out}
-.papusLoadingDots span:nth-child(2){animation-delay:.16s}
-.papusLoadingDots span:nth-child(3){animation-delay:.32s}
-@keyframes papusDot{0%,70%,100%{transform:translateY(0);opacity:.35}35%{transform:translateY(-7px);opacity:1}}
-@media(prefers-reduced-motion:reduce){.papusLoadingDots span{animation-duration:2.2s}#papusSplash{transition-duration:.15s}}
-
 </style>
 
 </head>
 
 <body>
-
-<div id="papusSplash" role="status" aria-label="Cargando Papus Chat">
-  <img src="papus-chat.png" alt="Papus Chat">
-  <div class="papusLoadingDots" aria-hidden="true"><span></span><span></span><span></span></div>
-</div>
-<div id="mobileBackdrop" aria-hidden="true"></div>
 
 <div id="app">
 
@@ -813,6 +741,13 @@ main{position:relative;min-width:0}
             </select>
         </div>
 
+        <div class="audioOption cameraDeviceOption">
+            <label class="audioOptionLabel" for="cameraSelect">📷</label>
+            <select id="cameraSelect" class="audioDeviceSelect" aria-label="Elegir cámara">
+                <option value="">Detectando cámaras…</option>
+            </select>
+        </div>
+
     </div>
 
 </aside>
@@ -825,7 +760,6 @@ main{position:relative;min-width:0}
 <main>
 
     <div class="topbar" id="topbar">
-        <button id="mobileMenuButton" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
         <span class="topbarTitle">💬Chat General💬</span>
     </div>
 
@@ -839,6 +773,8 @@ main{position:relative;min-width:0}
         <div class="callControls">
             <button class="callControl" id="micToggle" title="Activar/desactivar micrófono" onclick="toggleCallControl('micToggle','🎤','🔇')">🎤</button>
             <button class="callControl" id="soundToggle" title="Activar/desactivar sonido" onclick="toggleCallControl('soundToggle','🔊','🔈')">🔊</button>
+            <button class="callControl" id="cameraToggle" title="Activar/desactivar cámara" aria-pressed="false">📷</button>
+            <button class="callControl" id="shareScreenToggle" title="Compartir pantalla">🖥️</button>
             <button class="callControl hangup" title="Salir de la llamada" onclick="colgarLlamada()">📞</button>
         </div>
     </section>
@@ -1738,9 +1674,18 @@ function renderOnlineUsers(){
         const avatar=document.createElement("span");
         avatar.className="userAvatar";
         ponerAvatar(avatar, usuario.nombre, usuario.avatar);
+        const info=document.createElement("span");
+        info.className="userInfo";
         const nombre=document.createElement("span");
+        nombre.className="userName";
         nombre.textContent=usuario.nombre+(usuario.id===socket.id?" (tú)":"");
-        div.append(avatar,nombre);
+        const enLlamada = participantesLlamada.some(p => p.id && p.id === usuario.id);
+        const estado=document.createElement("span");
+        estado.className="userStatus" + (enLlamada ? " inCall" : " online");
+        estado.textContent = enLlamada ? "● En llamada" : "● En línea";
+        info.append(nombre, estado);
+        div.append(avatar,info);
+        if(enLlamada) div.classList.add("userInCall");
         users.appendChild(div);
     });
 }
@@ -1777,6 +1722,7 @@ socket.on("call-participants", (participants) => {
         microfonoSilenciado: !!p.microfonoSilenciado
     }));
     renderCallPeople();
+    renderOnlineUsers();
 });
 
 socket.on("profile-photo-updated", (perfil) => {
@@ -1817,6 +1763,7 @@ function renderCallPeople(){
         people.unshift({id: socket.id, nombre: nombreVisible, avatar: fotoPerfil});
     }
     container.innerHTML = "";
+    container.classList.remove("hasMedia");
     people.forEach(person => {
         const card = document.createElement("div");
         card.className = "callPerson" + ((person.id === socket.id && yoEstoyHablando) ? " speaking" : "");
@@ -1871,9 +1818,23 @@ function crearConexionLlamada(peerId){
     if (!peerId || peerId === socket.id || conexionesLlamada.has(peerId)) return conexionesLlamada.get(peerId);
     const pc = new RTCPeerConnection(rtcConfigLlamada);
     conexionesLlamada.set(peerId, pc);
+    if (typeof window.papusAttachMediaToPeer === 'function') window.papusAttachMediaToPeer(pc);
     if (microfonoStreamLlamada) microfonoStreamLlamada.getAudioTracks().forEach(track => pc.addTrack(track, microfonoStreamLlamada));
     pc.onicecandidate = event => { if (event.candidate) socket.emit("call-signal", {to: peerId, signal: {candidate: event.candidate}}); };
     pc.ontrack = event => {
+        if (event.track.kind === "video") {
+            const person = participantesLlamada.find(p => p.id === peerId) || {id: peerId, nombre: "Participante", avatar: ""};
+            let card = document.querySelector('.callPerson[data-user-id="' + CSS.escape(peerId) + '"]');
+            if (!card) { participantesLlamada.push(person); renderCallPeople(); card = document.querySelector('.callPerson[data-user-id="' + CSS.escape(peerId) + '"]'); }
+            if (card) {
+                let video = card.querySelector('video[data-remote-video]');
+                if (!video) { video = document.createElement('video'); video.dataset.remoteVideo = 'true'; video.autoplay = true; video.playsInline = true; video.muted = true; card.prepend(video); }
+                video.srcObject = event.streams[0] || new MediaStream([event.track]);
+                card.classList.add('hasVideo'); document.getElementById('callPeople')?.classList.add('hasMedia');
+                event.track.addEventListener('ended', () => { video.remove(); if (!card.querySelector('video')) card.classList.remove('hasVideo'); }, {once:true});
+            }
+            return;
+        }
         let audio = audiosRemotos.get(peerId);
         if (!audio) {
             audio = document.createElement("audio"); audio.autoplay = true; audio.playsInline = true;
@@ -2152,30 +2113,184 @@ cargarDispositivosAudio();
 </script>
 
 
+<style>
+/* Papus Chat: llamada multimedia integrada, conservando el tema original */
+:root{--papus-bg:#071226;--papus-panel:#0b1930;--papus-panel2:#101f39;--papus-border:#263d62;--papus-blue:#3478f6;--papus-purple:#6652ff;--papus-text:#edf4ff;--papus-muted:#9db1d2}
+#callStage{background:radial-gradient(ellipse at 48% 0%,#132b53 0%,#08152b 56%,#060e1e 100%);gap:18px;padding:20px;overflow:auto}
+.callTitle{align-self:flex-start;font-size:22px;letter-spacing:.1px}
+.callSubtitle{align-self:flex-start;margin-top:-12px;color:#9bb6e2}
+.callPeople{width:100%;max-width:1120px;flex:1;min-height:180px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));align-content:center;gap:12px}
+.callPerson{position:relative;width:100%;height:clamp(190px,34vh,360px);min-width:0;overflow:hidden;border-radius:13px;background:linear-gradient(145deg,#111f38,#0b1528);border:1px solid #29446e;box-shadow:0 8px 26px #0003;gap:8px;transition:transform .18s,border-color .18s,box-shadow .18s}
+.callPerson:hover{border-color:#557bc0;transform:translateY(-1px)}
+.callPerson .callAvatar{width:90px;height:90px}
+.callPerson .callPersonName{position:absolute;left:10px;bottom:10px;background:#071226d9;border:1px solid #304a70;border-radius:7px;padding:6px 9px;font-size:12px;z-index:2}
+.callPerson video{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;background:#060b16}
+.callPerson.hasVideo .callAvatar{display:none}
+.callControls{gap:10px;flex-wrap:wrap}
+.callControl{background:#142744;border:1px solid #2b4267;box-shadow:0 5px 14px #0002;transition:transform .16s,background .16s,border-color .16s}
+.callControl:hover{background:#203b63;border-color:#5b7fba;transform:translateY(-2px)}
+.callControl:active{transform:scale(.94)}
+.callControl.active{background:#176b58;border-color:#2fbf9f}
+.callControl.hangup{background:#e63858;border-color:#ff6680}
+.callControl.hangup:hover{background:#c92748}
+.bottomProfile .audioOption{display:flex;align-items:center;gap:7px;margin-top:7px}
+.bottomProfile .customAudioSelect{max-width:190px;flex:1}
+.bottomProfile .cameraDeviceOption .customDeviceSelect{max-width:190px}
+.customDeviceSelect{width:100%;min-width:0;max-width:190px;min-height:30px;padding:6px 25px 6px 9px;border:1px solid #2e4567;border-radius:7px;background:#111c30;color:#dbeafe;font:500 11px/1.2 "Segoe UI",sans-serif;outline:none;cursor:pointer}
+.customDeviceSelect:focus{border-color:#60a5fa;box-shadow:0 0 0 2px #3b82f633}
+.customDeviceSelect option{background:#0b1220;color:#dbeafe}
+#papusShareOverlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:18px;background:#020817b8;backdrop-filter:blur(8px)}
+#papusShareOverlay.open{display:flex;animation:papusFadeIn .18s ease-out}
+.papusShareDialog{width:min(650px,100%);background:linear-gradient(145deg,#101f39,#09152a);border:1px solid #304b76;border-radius:16px;box-shadow:0 25px 80px #0009;color:var(--papus-text);overflow:hidden}
+.papusShareHeader{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #263b5c}
+.papusShareHeading{font-size:17px;font-weight:750}.papusShareDesc{font-size:12px;color:var(--papus-muted);margin-top:5px}
+.papusShareClose{border:0;background:transparent;color:#a9bfdf;font-size:22px;cursor:pointer;border-radius:8px;width:34px;height:34px}.papusShareClose:hover{background:#203554;color:white}
+.papusShareTabs{display:flex;gap:6px;padding:12px 18px 0}
+.papusShareTab{flex:1;border:1px solid #293f63;border-radius:8px 8px 0 0;background:#0b1830;color:#b8c9e4;padding:10px 6px;font-size:12px;cursor:pointer}
+.papusShareTab[aria-selected=true]{background:#1a3157;color:white;border-color:#5579ff;box-shadow:inset 0 -2px #6652ff}
+.papusShareBody{padding:18px 20px;min-height:145px}
+.papusShareChoice{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid #2a4167;background:#0b1830;border-radius:10px;margin-bottom:9px;cursor:pointer;transition:border .15s,background .15s}
+.papusShareChoice:hover,.papusShareChoice.selected{border-color:#7167ff;background:#17294b}
+.papusShareIcon{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;background:#1b3155;font-size:21px;flex-shrink:0}
+.papusShareChoice strong{display:block;font-size:13px}.papusShareChoice small{display:block;color:#9db1d2;font-size:11px;margin-top:4px}
+.papusShareFooter{display:flex;justify-content:flex-end;gap:9px;padding:14px 20px;border-top:1px solid #263b5c;background:#091429}
+.papusShareBtn{border:1px solid #31496f;border-radius:9px;padding:10px 17px;background:#142744;color:#dce9ff;font-weight:650;cursor:pointer;transition:transform .15s,background .15s}
+.papusShareBtn:hover{background:#203b63;transform:translateY(-1px)}.papusShareBtn.primary{background:linear-gradient(100deg,#5366f4,#7754f7);border-color:#7774ff;color:#fff}.papusShareBtn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+#papusShareStatus{font-size:12px;color:#8eb5ff;padding:0 20px 12px;min-height:10px}
+@keyframes papusFadeIn{from{opacity:0}to{opacity:1}}
+@media(max-width:760px){#callStage{padding:12px;gap:13px}.callPeople{grid-template-columns:1fr;align-content:start}.callPeople:not(.hasMedia){grid-template-columns:repeat(auto-fit,minmax(145px,165px));justify-content:center}.callPerson{height:clamp(180px,32vh,270px)}.papusShareTabs{padding-left:10px;padding-right:10px}.papusShareBody{padding:12px}.papusShareHeader,.papusShareFooter{padding:13px}}
+/* Estado de usuarios: vuelve a mostrar En línea / En llamada en la lista lateral. */
+#users .user{align-items:center;min-height:34px;transition:background .16s ease}
+#users .user:hover{background:#13213a}
+.userInfo{display:flex;flex-direction:column;gap:2px;min-width:0}
+.userName{font-size:12px;color:#edf4ff;line-height:1.2}
+.userStatus{font-size:10px;line-height:1.2}
+.userStatus.online{color:#31c979}
+.userStatus.inCall{color:#61a5ff}
+.userStatus.inCall::first-letter{color:#31c979}
+/* Solo audio = tarjeta cuadrada compacta. Cámara o pantalla = tarjeta grande. */
+#callPeople{grid-template-columns:repeat(auto-fit,minmax(150px,174px));justify-content:center;align-content:center}
+#callPeople .callPerson{width:100%;height:174px;min-height:174px}
+#callPeople.hasMedia{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),min(100%,520px)));justify-content:center;align-content:center}
+#callPeople.hasMedia .callPerson{height:auto;aspect-ratio:16/9;min-height:220px;max-height:360px}
+#callPeople .callPerson.hasVideo{border-color:#3976e8;box-shadow:0 0 0 1px #3976e855,0 10px 28px #0004}
+.bottomProfile .cameraDeviceOption{display:flex;align-items:center;gap:7px;margin-top:7px}
+@media(max-width:760px){#callPeople.hasMedia{grid-template-columns:minmax(0,1fr)}#callPeople.hasMedia .callPerson{height:auto;aspect-ratio:16/10;min-height:190px;max-height:320px}}
+
+/* Indicadores de privacidad y tarjetas de vídeo al estilo Papus Chat. */
+.callStateBadges{position:absolute;right:9px;top:9px;z-index:5;display:flex;gap:6px;align-items:center}
+.callStateBadges span{display:grid;place-items:center;min-width:29px;height:29px;padding:0 6px;border-radius:9px;background:#071226eF;border:1px solid #385078;font-size:15px;box-shadow:0 3px 10px #0005}
+.callControl.off{background:#d9364f!important;border-color:#ff7183!important}
+#callPeople .callPerson:not(.hasVideo){aspect-ratio:1/1;height:auto;min-height:150px;max-height:190px}
+#callPeople.hasMedia .callPerson{aspect-ratio:16/9;max-height:360px}
+#callPeople .callPerson video{object-fit:cover;background:#050912}
+#callPeople .callPerson video[data-local-kind="screen"]{object-fit:contain;background:#050912}
+.bottomProfile .cameraDeviceOption .customAudioSelect{max-width:190px;flex:1}
+#papusShareOverlay{background:#030817d9}
+.papusShareDialog{background:linear-gradient(145deg,#101f39,#09152a);border-color:#304b76}
+</style>
+<div id="papusShareOverlay" role="dialog" aria-modal="true" aria-labelledby="papusShareTitle">
+ <div class="papusShareDialog">
+  <div class="papusShareHeader"><div><div class="papusShareHeading" id="papusShareTitle">🖥️ Compartir pantalla</div><div class="papusShareDesc">Elige el tipo de contenido que quieres compartir con la llamada.</div></div><button class="papusShareClose" id="papusShareClose" aria-label="Cerrar">×</button></div>
+  <div class="papusShareTabs" role="tablist"><button class="papusShareTab" data-share-mode="screen" aria-selected="true">Toda la pantalla</button><button class="papusShareTab" data-share-mode="window" aria-selected="false">Ventana</button><button class="papusShareTab" data-share-mode="tab" aria-selected="false">Pestaña</button></div>
+  <div class="papusShareBody">
+   <div class="papusShareChoice selected" data-share-choice="screen"><div class="papusShareIcon">🖥️</div><div><strong>Toda la pantalla</strong><small>Comparte el escritorio completo y cambia entre aplicaciones.</small></div></div>
+   <div class="papusShareChoice" data-share-choice="window"><div class="papusShareIcon">🪟</div><div><strong>Una ventana</strong><small>Comparte solo una aplicación, como Papus Chat o Visual Studio Code.</small></div></div>
+   <div class="papusShareChoice" data-share-choice="tab"><div class="papusShareIcon">🌐</div><div><strong>Una pestaña</strong><small>Comparte una pestaña del navegador.</small></div></div>
+  </div><div id="papusShareStatus" aria-live="polite">Chrome abrirá su selector protegido para elegir la pantalla, ventana o pestaña. Por seguridad, la web no puede cambiar el diseño de ese selector.</div>
+  <div class="papusShareFooter"><button class="papusShareBtn" id="papusShareCancel">Cancelar</button><button class="papusShareBtn primary" id="papusShareStart">Elegir y compartir</button></div>
+ </div>
+</div>
 <script>
-(function(){
-  function initPapusMobileMenu(){
-    var button=document.getElementById('mobileMenuButton'),sidebar=document.querySelector('aside'),backdrop=document.getElementById('mobileBackdrop');
-    if(!button||!sidebar||!backdrop)return;
-    function openMenu(){sidebar.classList.add('mobileOpen');backdrop.classList.add('show');button.setAttribute('aria-expanded','true');backdrop.setAttribute('aria-hidden','false')}
-    function closeMenu(){sidebar.classList.remove('mobileOpen');backdrop.classList.remove('show');button.setAttribute('aria-expanded','false');backdrop.setAttribute('aria-hidden','true')}
-    button.addEventListener('click',function(e){e.stopPropagation();sidebar.classList.contains('mobileOpen')?closeMenu():openMenu()});
-    backdrop.addEventListener('click',closeMenu);
-    sidebar.querySelectorAll('.channel,.user,.profile').forEach(function(item){item.addEventListener('click',function(){window.setTimeout(closeMenu,100)})});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
-    window.addEventListener('resize',function(){if(window.innerWidth>760)closeMenu()});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPapusMobileMenu);else initPapusMobileMenu();
-})();
-(function(){
-  var hidden=false;
-  function hideSplash(){
-    if(hidden)return;hidden=true;
-    var splash=document.getElementById('papusSplash');if(!splash)return;
-    window.setTimeout(function(){splash.classList.add('hide');window.setTimeout(function(){if(splash.parentNode)splash.parentNode.removeChild(splash)},650)},1100);
-  }
-  if(document.readyState==='complete')hideSplash();else window.addEventListener('load',hideSplash,{once:true});
-  window.setTimeout(hideSplash,5000);
+/* Funciones multimedia adicionales de Papus Chat. La selección final de pantalla la controla el navegador por seguridad. */
+(()=>{
+ const cameraSelect=document.getElementById('cameraSelect');
+ const cameraToggle=document.getElementById('cameraToggle');
+ const shareToggle=document.getElementById('shareScreenToggle');
+ const overlay=document.getElementById('papusShareOverlay');
+ const shareStatus=document.getElementById('papusShareStatus');
+ let cameraStream=null, screenStream=null, shareMode='screen';
+ const refreshCameraPicker=typeof crearSelectorAudioPersonalizado==='function'?crearSelectorAudioPersonalizado(cameraSelect,'📷'):()=>{};
+ const mediaSenders=new Map();
+ function publishVideo(stream,kind){
+  if(!stream)return; const track=stream.getVideoTracks()[0]; if(!track)return;
+  if(typeof conexionesLlamada!=='undefined') conexionesLlamada.forEach(pc=>{
+   const old=pc.getSenders().find(sender=>sender.track&&sender.track.kind==='video'&&sender.track.__papusKind===kind);
+   if(old){old.replaceTrack(track).catch(()=>{});if(!mediaSenders.has(kind))mediaSenders.set(kind,new Map());mediaSenders.get(kind).set(pc,old)}
+   else {const sender=pc.addTrack(track,stream);sender.track.__papusKind=kind;if(!mediaSenders.has(kind))mediaSenders.set(kind,new Map());mediaSenders.get(kind).set(pc,sender)}
+  });
+ }
+ function unpublishVideo(kind){const senders=mediaSenders.get(kind);if(senders){senders.forEach(sender=>sender.replaceTrack(null).catch(()=>{}));mediaSenders.delete(kind)}}
+ window.papusAttachMediaToPeer=function(pc){[['camera',cameraStream],['screen',screenStream]].forEach(([kind,stream])=>{if(!stream)return;const track=stream.getVideoTracks()[0];if(track&&!pc.getSenders().some(x=>x.track===track)){const sender=pc.addTrack(track,stream);sender.track.__papusKind=kind;if(!mediaSenders.has(kind))mediaSenders.set(kind,new Map());mediaSenders.get(kind).set(pc,sender)}})};
+ const localId=()=> (typeof socket!=='undefined'&&socket.id)||'';
+ function ownCard(){return document.querySelector('.callPerson[data-user-id="'+CSS.escape(localId())+'"]')}
+ function attachVideo(stream,kind){
+  let card=ownCard(); if(!card){if(typeof renderCallPeople==='function')renderCallPeople();card=ownCard()} if(!card)return;
+  let v=card.querySelector('video[data-local-kind="'+kind+'"]');
+  if(!v){v=document.createElement('video');v.dataset.localKind=kind;v.autoplay=true;v.playsInline=true;v.muted=true;card.prepend(v)}
+  v.srcObject=stream;card.classList.add('hasVideo'); if(kind==='camera')publishVideo(stream,'camera'); else publishVideo(stream,'screen');
+  const people=document.getElementById('callPeople');if(people)people.classList.add('hasMedia');
+ }
+ function removeVideo(kind){unpublishVideo(kind);document.querySelectorAll('video[data-local-kind="'+kind+'"]').forEach(v=>{v.srcObject=null;v.remove()});const card=ownCard();if(card&&!card.querySelector('video'))card.classList.remove('hasVideo');const people=document.getElementById('callPeople');if(people&&!people.querySelector('.callPerson.hasVideo'))people.classList.remove('hasMedia')}
+ function updateStateBadges(){
+  document.querySelectorAll('.callPerson').forEach(card=>{
+   let badge=card.querySelector('.callStateBadges');if(!badge){badge=document.createElement('div');badge.className='callStateBadges';card.appendChild(badge)}
+   const own=card.dataset.userId===localId();
+   const muted=own?!microfonoLlamadaActivo:!!participantesLlamada.find(p=>p.id===card.dataset.userId)?.microfonoSilenciado;
+   badge.innerHTML=(muted?'<span title="Micrófono silenciado">🎙️̸</span>':'')+(!sonidoLlamadaActivo&&own?'<span title="Sonido desactivado">🔇</span>':'');
+   badge.style.display=badge.innerHTML?'flex':'none';
+  });
+ }
+ const priorRender=window.renderCallPeople;
+ if(priorRender)window.renderCallPeople=function(){priorRender();if(cameraStream)attachVideo(cameraStream,'camera');if(screenStream)attachVideo(screenStream,'screen');updateStateBadges()};
+ const priorToggle=window.toggleCallControl;
+ if(priorToggle)window.toggleCallControl=function(id,onIcon,offIcon){
+  priorToggle(id,onIcon,offIcon);
+  if(id==='soundToggle'&&!sonidoLlamadaActivo&&microfonoLlamadaActivo){priorToggle('micToggle','🎤','🔇')}
+  updateStateBadges();
+ };
+ async function refreshCameras(){
+  if(!navigator.mediaDevices?.enumerateDevices){cameraSelect.innerHTML='<option value="">Cámara no compatible</option>';refreshCameraPicker();return}
+  try{const devices=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');const prev=cameraSelect.value;cameraSelect.innerHTML='';
+   if(!devices.length){cameraSelect.add(new Option('No hay cámaras disponibles',''));cameraSelect.disabled=true;return}
+   cameraSelect.disabled=false;devices.forEach((d,i)=>cameraSelect.add(new Option(d.label||('Cámara '+(i+1)),d.deviceId)));if([...cameraSelect.options].some(o=>o.value===prev))cameraSelect.value=prev;refreshCameraPicker();
+  }catch(e){cameraSelect.innerHTML='<option value="">No se pudieron cargar</option>';refreshCameraPicker()}
+ }
+ async function startCamera(){
+  if(!navigator.mediaDevices?.getUserMedia){alert('Este navegador no permite usar la cámara.');return}
+  try{if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());const id=cameraSelect.value;cameraStream=await navigator.mediaDevices.getUserMedia({audio:false,video:id?{deviceId:{exact:id}}:true});attachVideo(cameraStream,'camera');cameraToggle.classList.add('active');cameraToggle.setAttribute('aria-pressed','true');cameraToggle.title='Desactivar cámara';await refreshCameras();}
+  catch(e){console.error(e);shareStatus.textContent='No se pudo activar la cámara. Revisa los permisos del navegador.';if(overlay.classList.contains('open')){}else alert('No se pudo activar la cámara. Comprueba los permisos del navegador y que no esté siendo usada por otra aplicación.');}
+ }
+ function stopCamera(){unpublishVideo('camera');if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;removeVideo('camera');cameraToggle.classList.remove('active');cameraToggle.setAttribute('aria-pressed','false');cameraToggle.title='Activar cámara'}
+ cameraToggle.addEventListener('click',()=>cameraStream?stopCamera():startCamera());
+ cameraSelect.addEventListener('change',()=>{if(cameraStream)startCamera()});
+ async function refreshAfterPermission(){await refreshCameras()}
+ if(navigator.mediaDevices?.addEventListener)navigator.mediaDevices.addEventListener('devicechange',refreshCameras);
+ cameraToggle.addEventListener('contextmenu',e=>{e.preventDefault();refreshAfterPermission()});
+ function openShare(){overlay.classList.add('open');document.getElementById('papusShareStart').focus()}
+ function closeShare(){overlay.classList.remove('open')}
+ shareToggle.addEventListener('click',()=>screenStream?stopShare():openShare());
+ document.getElementById('papusShareClose').addEventListener('click',closeShare);document.getElementById('papusShareCancel').addEventListener('click',closeShare);
+ overlay.addEventListener('click',e=>{if(e.target===overlay)closeShare()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))closeShare()});
+ document.querySelectorAll('[data-share-mode]').forEach(b=>b.addEventListener('click',()=>{shareMode=b.dataset.shareMode;document.querySelectorAll('[data-share-mode]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('[data-share-choice]').forEach(x=>x.classList.toggle('selected',x.dataset.shareChoice===shareMode));}));
+ document.querySelectorAll('[data-share-choice]').forEach(b=>b.addEventListener('click',()=>{shareMode=b.dataset.shareChoice;document.querySelectorAll('[data-share-mode]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.shareMode===shareMode)));document.querySelectorAll('[data-share-choice]').forEach(x=>x.classList.toggle('selected',x===b));}));
+ async function startShare(){
+  if(!navigator.mediaDevices?.getDisplayMedia){shareStatus.textContent='Tu navegador no permite compartir pantalla. Prueba con Chrome o Edge actualizado.';return}
+  const btn=document.getElementById('papusShareStart');btn.disabled=true;shareStatus.textContent='Chrome abrirá su selector protegido. La web no puede personalizar esa ventana por motivos de seguridad.';
+  try{screenStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:false});attachVideo(screenStream,'screen');shareToggle.classList.add('active');shareToggle.title='Dejar de compartir pantalla';closeShare();
+   const track=screenStream.getVideoTracks()[0];if(track)track.addEventListener('ended',stopShare,{once:true});
+   const status=document.getElementById('callStatus');if(status)status.textContent='🖥️ Compartiendo pantalla';
+  }catch(e){if(e.name!=='NotAllowedError')shareStatus.textContent='No se pudo iniciar la compartición. Inténtalo de nuevo.';else shareStatus.textContent='Compartición cancelada.';}
+  finally{btn.disabled=false}
+ }
+ function stopShare(){unpublishVideo('screen');if(screenStream)screenStream.getTracks().forEach(t=>t.stop());screenStream=null;removeVideo('screen');shareToggle.classList.remove('active');shareToggle.title='Compartir pantalla';const status=document.getElementById('callStatus');if(status)status.textContent=typeof llamadaActiva!=='undefined'&&llamadaActiva?'Estás en la llamada':'Llamada';}
+ document.getElementById('papusShareStart').addEventListener('click',startShare);window.papusStopScreenShare=stopShare;
+ const originalHangup=window.colgarLlamada;if(typeof originalHangup==='function'){window.colgarLlamada=function(){stopShare();stopCamera();return originalHangup.apply(this,arguments)}}
+ if(typeof renderCallPeople==='function'){
+  const originalRender=window.renderCallPeople;
+  if(originalRender)window.renderCallPeople=function(){originalRender();if(cameraStream)attachVideo(cameraStream,'camera');if(screenStream)attachVideo(screenStream,'screen')}
+ }
+ refreshCameras();
 })();
 </script>
 
